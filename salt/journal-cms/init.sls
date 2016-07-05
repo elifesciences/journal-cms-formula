@@ -5,7 +5,7 @@ journal-repository:
         - identity: {{ pillar.elife.deploy_user.key or '' }}
         - rev: {{ salt['elife.rev']() }}
         - branch: {{ salt['elife.branch']() }}
-        - target: /srv/journal/
+        - target: /srv/journal-cms/
         - force_fetch: True
         - force_checkout: True
         - force_reset: True
