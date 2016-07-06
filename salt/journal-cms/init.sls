@@ -19,33 +19,6 @@ journal-cms-repository:
         - require:
             - git: journal-cms-repository
 
-web-sites-default:
-    file.directory:
-        - name: /srv/journal-cms/web/sites/default/
-        - makedirs: True
-        - user: {{ pillar.elife.deploy_user.username }}
-        - group: {{ pillar.elife.deploy_user.username }}
-        - require:
-            - journal-cms-repository
-
-site-settings:
-    file.managed:
-        - name: /srv/journal-cms/web/sites/default/settings.php
-        - source: salt://journal-cms/config/srv-journal-cms-web-sites-default-settings.php
-        - template: jinja
-        - user: {{ pillar.elife.deploy_user.username }}
-        - group: {{ pillar.elife.deploy_user.username }}
-        - require:
-            - web-sites-default
-
-site-services:
-    file.managed:
-        - name: /srv/journal-cms/web/sites/default/services.yml
-        - source: salt://journal-cms/config/srv-journal-cms-web-sites-default-services.yml
-        - user: {{ pillar.elife.deploy_user.username }}
-        - group: {{ pillar.elife.deploy_user.username }}
-        - require:
-            - web-sites-default
 
 composer-install:
     cmd.run:
@@ -54,8 +27,16 @@ composer-install:
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
             - journal-cms-repository
-            - site-settings
-            - site-services
+
+site-settings:
+    file.managed:
+        - name: /srv/journal-cms/config/local-settings.php
+        - source: salt://journal-cms/config/srv-journal-config-local-settings.php
+        - template: jinja
+        - user: {{ pillar.elife.deploy_user.username }}
+        - group: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - composer-install
 
 journal-cms-vhost:
     file.managed:
