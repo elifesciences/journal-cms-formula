@@ -218,6 +218,14 @@
  * @endcode
  */
 $databases = array();
+$databases['default']['default'] = array(
+    'driver' => 'mysql',
+    'database' => '{{ pillar.journal_cms.db.name }}',
+    'username' => '{{ pillar.journal_cms.db.user }}',
+    'password' => '{{ pillar.journal_cms.db.password }}',
+    'host' => 'localhost',
+    'prefix' => '',
+);
 
 /**
  * Location of the site configuration files.
@@ -285,7 +293,7 @@ $config_directories = array();
  *   $settings['hash_salt'] = file_get_contents('/home/example/salt.txt');
  * @endcode
  */
-$settings['hash_salt'] = 'hT-aFQaqkcvgf5NI5n4H7izF_mCVLC6iXTv0VLd4sjBKe-ii5WtI0WLOtaorqtt_vriaXemNVw';
+$settings['hash_salt'] = '{{ salt['grains.get_or_set_hash']('journal-cms:hash_salt') }}';
 
 /**
  * Deployment identifier.
