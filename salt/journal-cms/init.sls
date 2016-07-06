@@ -37,13 +37,15 @@ composer-install:
 
 site-settings:
     file.managed:
-        - name: /srv/journal-cms/config/local-settings.php
-        - source: salt://journal-cms/config/srv-journal-config-local-settings.php
+        - name: /srv/journal-cms/config/local.settings.php
+        - source: salt://journal-cms/config/srv-journal-config-local.settings.php
         - template: jinja
         - user: {{ pillar.elife.deploy_user.username }}
         - group: {{ pillar.elife.deploy_user.username }}
         - require:
             - composer-install
+        - require_in:
+            - site-install
             
 {% for key in ['db', 'legacy_db'] %}
 {% set db = pillar.journal_cms[key] %}
@@ -84,19 +86,26 @@ journal-cms-vhost:
     file.managed:
         - name: /etc/nginx/sites-enabled/journal-cms.conf
         - source: salt://journal-cms/config/etc-nginx-sites-enabled-journal-cms.conf
-        - require:
+        - require_in:
             - site-install
         - listen_in:
             - service: nginx-server-service
             - service: php-fpm
 
+# when more stable, maybe this should be extended to the fpm one?
+php-cli-ini:
+    file.managed:
+        - name: /etc/php/7.0/cli/conf.d/20-sendmail.ini
+        - source: salt://journal-cms/config/etc-php-7.0-cli-conf.d-20-sendmail.ini
+        - require:
+            - php
+        - require_in:
+            - site-install
+
 
 site-install:
     cmd.run:
         - name: ../vendor/bin/drush si config_installer -y
-        - cwd: /srv/journal-cms
+        - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
-        - require:
-            - site-settings
-            - journal-cms-vhost
 
