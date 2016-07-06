@@ -19,6 +19,13 @@ journal-cms-repository:
         - require:
             - git: journal-cms-repository
 
+hotfix-remove-composer-lock-to-be-able-to-install:
+    cmd.run:
+        - name: rm composer.lock
+        - cwd: /srv/journal-cms
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - journal-cms-repository
 
 composer-install:
     cmd.run:
@@ -26,7 +33,7 @@ composer-install:
         - cwd: /srv/journal-cms
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
-            - journal-cms-repository
+            - hotfix-remove-composer-lock-to-be-able-to-install
 
 site-settings:
     file.managed:
@@ -37,21 +44,17 @@ site-settings:
         - group: {{ pillar.elife.deploy_user.username }}
         - require:
             - composer-install
-
-journal-cms-vhost:
-    file.managed:
-        - name: /etc/nginx/sites-enabled/journal-cms.conf
-        - source: salt://journal-cms/config/etc-nginx-sites-enabled-journal-cms.conf
-        - listen_in:
-            - service: nginx-server-service
-            - service: php-fpm
-
+            
 {% for key in ['db', 'legacy_db'] %}
 {% set db = pillar.journal_cms[key] %}
 journal-cms-{{ key }}:
     mysql_database.present:
         - name: {{ db.name }}
         - connection_pass: {{ pillar.elife.db_root.password }}
+        - require:
+            - service: mysql-server
+        - require_in:
+            - site-install
 
 journal-cms-{{ key }}-user:
     mysql_user.present:
@@ -61,6 +64,8 @@ journal-cms-{{ key }}-user:
         - host: localhost
         - require:
             - service: mysql-server
+        - require_in:
+            - site-install
 
 journal-cms-{{ key }}-access:
     mysql_grants.present:
@@ -71,4 +76,27 @@ journal-cms-{{ key }}-access:
         - require:
             - mysql_user: journal-cms-{{ key }}-user
             - mysql_database: journal-cms-{{ key }}
+        - require_in:
+            - site-install
 {% endfor %}
+
+journal-cms-vhost:
+    file.managed:
+        - name: /etc/nginx/sites-enabled/journal-cms.conf
+        - source: salt://journal-cms/config/etc-nginx-sites-enabled-journal-cms.conf
+        - require:
+            - site-install
+        - listen_in:
+            - service: nginx-server-service
+            - service: php-fpm
+
+
+site-install:
+    cmd.run:
+        - name: ../vendor/bin/drush si config_installer -y
+        - cwd: /srv/journal-cms
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - site-settings
+            - journal-cms-vhost
+
