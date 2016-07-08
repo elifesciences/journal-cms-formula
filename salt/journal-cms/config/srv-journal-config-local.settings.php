@@ -10,7 +10,5 @@ $databases['default']['default'] = array(
 );
 
 $settings['trusted_host_patterns'] = array(
-    '^elife-2.0-website.dev$',
-    '^elifesciences\.org$',
-    '^.+\.elifesciences\.org$',
+    '.*',
 );
