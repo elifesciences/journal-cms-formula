@@ -21,7 +21,7 @@ journal-cms-repository:
 
 hotfix-remove-composer-lock-to-be-able-to-install:
     cmd.run:
-        - name: rm composer.lock
+        - name: rm -f composer.lock
         - cwd: /srv/journal-cms
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
@@ -33,6 +33,7 @@ composer-install:
         - cwd: /srv/journal-cms
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
+            - install-composer
             - hotfix-remove-composer-lock-to-be-able-to-install
 
 site-settings:
