@@ -110,3 +110,10 @@ site-install:
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
 
+# populates data into the labs until they will be created through the user interface
+migrate-labs:
+    cmd.run:
+        - name: ../vendor/bin/drush mi --all
+        - cwd: /srv/journal-cms/web
+        - require:
+            - site-install
