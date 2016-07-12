@@ -109,11 +109,13 @@ site-install:
         - name: ../vendor/bin/drush si config_installer -y
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
+        - unless:  ../vendor/bin/drush cget system.site name
 
 # populates data into the labs until they will be created through the user interface
 migrate-labs:
     cmd.run:
         - name: ../vendor/bin/drush mi --all
         - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
         - require:
             - site-install
