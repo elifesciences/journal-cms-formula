@@ -80,7 +80,7 @@ journal-cms-{{ key }}-access:
             - mysql_user: journal-cms-{{ key }}-user
             - mysql_database: journal-cms-{{ key }}
         - require_in:
-            - site-install
+            - cmd: site-install
 {% endfor %}
 
 journal-cms-vhost:
