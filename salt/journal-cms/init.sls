@@ -19,14 +19,6 @@ journal-cms-repository:
         - require:
             - git: journal-cms-repository
 
-hotfix-remove-composer-lock-to-be-able-to-install:
-    cmd.run:
-        - name: rm -f composer.lock
-        - cwd: /srv/journal-cms
-        - user: {{ pillar.elife.deploy_user.username }}
-        - require:
-            - journal-cms-repository
-
 composer-install:
     cmd.run:
         - name: composer --no-interaction install
@@ -34,7 +26,14 @@ composer-install:
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
             - install-composer
-            - hotfix-remove-composer-lock-to-be-able-to-install
+
+composer-drupal-scaffold:
+    cmd.run:
+        - name: composer drupal-scaffold
+        - cwd: /srv/journal-cms
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - composer-install
 
 site-settings:
     file.managed:
@@ -44,7 +43,7 @@ site-settings:
         - user: {{ pillar.elife.deploy_user.username }}
         - group: {{ pillar.elife.deploy_user.username }}
         - require:
-            - composer-install
+            - composer-drupal-scaffold
         - require_in:
             - site-install
             
