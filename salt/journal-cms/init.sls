@@ -55,7 +55,7 @@ journal-cms-{{ key }}:
         - name: {{ db.name }}
         - connection_pass: {{ pillar.elife.db_root.password }}
         - require:
-            - service: mysql-server
+            - mysql-ready
         - require_in:
             - site-install
 
@@ -66,7 +66,7 @@ journal-cms-{{ key }}-user:
         - connection_pass: {{ pillar.elife.db_root.password }}
         - host: localhost
         - require:
-            - service: mysql-server
+            - mysql-ready
         - require_in:
             - site-install
 
