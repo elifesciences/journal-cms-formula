@@ -1,6 +1,6 @@
 journal-cms-repository:
     git.latest:
-        - name: git@github.com:elifesciences/elife-2.0-website.git
+        - name: git@github.com:elifesciences/journal-cms.git
         - identity: {{ pillar.elife.deploy_user.key or '' }}
         - rev: {{ salt['elife.rev']() }}
         - branch: {{ salt['elife.branch']() }}
