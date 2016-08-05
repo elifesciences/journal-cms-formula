@@ -1,10 +1,10 @@
 journal_cms:
     db:
-        name: elife_2_0
-        user: elife_2_0
-        password: elife_2_0
+        name: journal_cms
+        user: journal_cms
+        password: journal_cms
 
     legacy_db:
-        name: elife_1_0
-        user: elife_1_0
-        password: elife_1_0
+        name: legacy_cms
+        user: legacy_cms
+        password: legacy_cms
