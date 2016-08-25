@@ -78,6 +78,7 @@ journal-cms-vhost:
     file.managed:
         - name: /etc/nginx/sites-enabled/journal-cms.conf
         - source: salt://journal-cms/config/etc-nginx-sites-enabled-journal-cms.conf
+        - template: jinja
         - require_in:
             - site-install
         - listen_in:
