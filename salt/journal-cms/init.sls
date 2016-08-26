@@ -27,6 +27,14 @@ composer-install:
         - require:
             - install-composer
 
+composer-drupal-scaffold:
+    cmd.run:
+        - name: composer drupal-scaffold
+        - cwd: /srv/journal-cms
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - composer-install
+
 site-settings:
     file.managed:
         - name: /srv/journal-cms/config/local.settings.php
@@ -35,7 +43,7 @@ site-settings:
         - user: {{ pillar.elife.deploy_user.username }}
         - group: {{ pillar.elife.deploy_user.username }}
         - require:
-            - composer-install
+            - composer-drupal-scaffold
         - require_in:
             - site-install
             
