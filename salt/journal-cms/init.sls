@@ -19,21 +19,34 @@ journal-cms-repository:
         - require:
             - git: journal-cms-repository
 
+
+web-sites-file-permissions:
+    cmd.run:
+        - name: |
+            chmod -f 755 web/sites/default || true
+            # shouldn't this be 644? This files does not seem executable
+            chmod -f 755 web/sites/default/settings.php || true
+        - cwd: /srv/journal-cms
+        - require:
+            - journal-cms-repository
+
 composer-install:
     cmd.run:
-        - name: composer --no-interaction install
+        - name: composer --no-interaction update
+        #- name: composer --no-interaction install
         - cwd: /srv/journal-cms
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
             - install-composer
+            - web-sites-file-permissions
 
-composer-drupal-scaffold:
-    cmd.run:
-        - name: composer drupal-scaffold
-        - cwd: /srv/journal-cms
-        - user: {{ pillar.elife.deploy_user.username }}
-        - require:
-            - composer-install
+#composer-drupal-scaffold:
+#    cmd.run:
+#        - name: composer drupal-scaffold
+#        - cwd: /srv/journal-cms
+#        - user: {{ pillar.elife.deploy_user.username }}
+#        - require:
+#            - composer-install
 
 site-settings:
     file.managed:
@@ -43,7 +56,8 @@ site-settings:
         - user: {{ pillar.elife.deploy_user.username }}
         - group: {{ pillar.elife.deploy_user.username }}
         - require:
-            - composer-drupal-scaffold
+            - composer-install
+            #- composer-drupal-scaffold
         - require_in:
             - site-install
             
@@ -94,7 +108,7 @@ journal-cms-vhost:
             - service: php-fpm
 
 # when more stable, maybe this should be extended to the fpm one?
-php-cli-ini:
+php-cli-ini-with-fake-sendmail:
     file.managed:
         - name: /etc/php/7.0/cli/conf.d/20-sendmail.ini
         - source: salt://journal-cms/config/etc-php-7.0-cli-conf.d-20-sendmail.ini
@@ -103,19 +117,23 @@ php-cli-ini:
         - require_in:
             - site-install
 
-
 site-install:
     cmd.run:
         - name: ../vendor/bin/drush si config_installer -y
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
-        - unless:  ../vendor/bin/drush cget system.site name
+        # always execute for now
+        #- unless:  ../vendor/bin/drush cget system.site name
 
 # populates data into the labs until they will be created through the user interface
 migrate-labs:
     cmd.run:
-        - name: ../vendor/bin/drush mi --all
+        - name: |
+            ../vendor/bin/drush mi jcms_labs_experiments_json
+            ../vendor/bin/drush mi jcms_labs_subjects_json
+        #- name: ../vendor/bin/drush mi --all
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
             - site-install
+
