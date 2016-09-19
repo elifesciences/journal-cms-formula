@@ -1,5 +1,5 @@
 journal-cms-repository:
-    git.latest:
+    builder.git_latest:
         - name: git@github.com:elifesciences/journal-cms.git
         - identity: {{ pillar.elife.projects_builder.key or '' }}
         - rev: {{ salt['elife.rev']() }}
@@ -17,7 +17,7 @@ journal-cms-repository:
             - user
             - group
         - require:
-            - git: journal-cms-repository
+            - builder: journal-cms-repository
 
 
 web-sites-file-permissions:
