@@ -1,3 +1,9 @@
+journal-cms-localhost:
+    host.present:
+        - ip: 127.0.0.2
+        - names:
+            - journal-cms.local
+
 journal-cms-repository:
     builder.git_latest:
         - name: git@github.com:elifesciences/journal-cms.git
@@ -39,6 +45,7 @@ composer-install:
         - require:
             - install-composer
             - web-sites-file-permissions
+            - journal-cms-localhost
 
 #composer-drupal-scaffold:
 #    cmd.run:
