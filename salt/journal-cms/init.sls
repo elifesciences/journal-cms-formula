@@ -4,6 +4,16 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
+# since Drupal may use `composer` as a command, we link it to the correct
+# version required by Puli
+journal-cms-composer-is-always-1.0:
+    file.symlink:
+        - name: /usr/local/bin/composer
+        - target: /usr/local/bin/composer1.0
+        - force: True
+        - require:
+            - php-composer-1.0
+
 journal-cms-repository:
     builder.git_latest:
         - name: git@github.com:elifesciences/journal-cms.git

@@ -6,4 +6,5 @@ base:
         - elife.nginx-php7
         - elife.mysql-client
         - elife.mysql-server
+        - elife.puli
         - journal-cms
