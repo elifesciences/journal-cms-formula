@@ -4,15 +4,15 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
-# since Drupal may use `composer` as a command, we link it to the correct
-# version required by Puli
-journal-cms-composer-is-always-1.0:
-    file.symlink:
-        - name: /usr/local/bin/composer
-        - target: /usr/local/bin/composer1.0
-        - force: True
+# this should have the fix https://github.com/puli/composer-plugin/pull/46
+puli-master:
+    cmd.run:
+        - name: |
+            composer global property-set minimum-stability dev
+            composer global require puli/cli 1.0.x-dev
+        - user: {{ pillar.elife.deploy_user.username }}
         - require:
-            - php-composer-1.0
+            - cmd: install-composer
 
 journal-cms-repository:
     builder.git_latest:
