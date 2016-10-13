@@ -8,7 +8,7 @@ journal-cms-localhost:
 puli-master:
     cmd.run:
         - name: |
-            composer global property-set minimum-stability dev
+            composer global config minimum-stability dev
             composer global require puli/cli 1.0.x-dev
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
