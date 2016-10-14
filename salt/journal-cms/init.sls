@@ -142,12 +142,12 @@ site-install:
         # always execute for now
         #- unless:  ../vendor/bin/drush cget system.site name
 
-# populates data into the labs until they will be created through the user interface
-migrate-labs:
+# populates data into the labs and subjects until they will be created through the user interface
+migrate-content:
     cmd.run:
         - name: |
             ../vendor/bin/drush mi jcms_labs_experiments_json
-            ../vendor/bin/drush mi jcms_labs_subjects_json
+            ../vendor/bin/drush mi jcms_subjects_json
         #- name: ../vendor/bin/drush mi --all
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
