@@ -25,16 +25,12 @@ journal-cms-repository:
         - force_checkout: True
         - force_reset: True
 
-    file.directory:
-        - name: /srv/journal-cms
-        - user: {{ pillar.elife.deploy_user.username }}
-        - group: {{ pillar.elife.deploy_user.username }}
-        - recurse:
-            - user
-            - group
+    # file.directory can be a bit slow when recurring over many files
+    cmd.run:
+        - name: chown -R {{ pillar.elife.deploy_user.username }}:{{ pillar.elife.deploy_user.username }} .
+        - cwd: /srv/journal-cms
         - require:
             - builder: journal-cms-repository
-
 
 web-sites-file-permissions:
     cmd.run:
