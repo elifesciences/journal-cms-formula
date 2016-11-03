@@ -138,6 +138,28 @@ site-install:
         # always execute for now
         #- unless:  ../vendor/bin/drush cget system.site name
 
+aws-credentials-cli:
+    file.managed:
+        - name: /home/{{ pillar.elife.deploy_user.username }}/.aws/credentials
+        - source: salt://journal-cms/config/home-user-.aws-credentials
+        - user: {{ pillar.elife.deploy_user.username }}
+        - group: {{ pillar.elife.deploy_user.username }}
+        - makedirs: True
+        - template: jinja
+        - require:
+            - site-install
+
+aws-credentials-www-data:
+    file.managed:
+        - name: /var/www/.aws/credentials
+        - source: salt://journal-cms/config/home-user-.aws-credentials
+        - user: www-data
+        - group: www-data
+        - makedirs: True
+        - template: jinja
+        - require:
+            - site-install
+
 # populates data into the labs and subjects until they will be created through the user interface
 migrate-content:
     cmd.run:
