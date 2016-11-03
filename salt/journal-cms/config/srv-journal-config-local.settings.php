@@ -12,3 +12,4 @@ $databases['default']['default'] = array(
 $settings['trusted_host_patterns'] = array(
     '.*',
 );
+$settings['jcms_sqs_queue'] = '{{ pillar.journal_cms.aws.queue }}';
