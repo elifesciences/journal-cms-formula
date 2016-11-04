@@ -7,9 +7,10 @@ journal-cms-localhost:
 # this should have the fix https://github.com/puli/composer-plugin/pull/46
 puli-master:
     cmd.run:
+        # install 1.0.0-beta10 at the moment
         - name: |
-            composer global config minimum-stability dev
-            composer global require puli/cli 1.0.x-dev
+            composer global remove puli/cli
+            curl https://puli.io/installer | php
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
             - cmd: install-composer
