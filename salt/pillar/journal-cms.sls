@@ -14,4 +14,9 @@ journal_cms:
         secret_access_key: null
         region: us-east-1
         queue: null
+        endpoint: http://10.0.2.2:4100
     
+    api:
+        articles_endpoint: null
+        auth_unpublished: null
+        auth_published: null

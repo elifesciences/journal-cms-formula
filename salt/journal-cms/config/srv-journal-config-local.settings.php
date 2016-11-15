@@ -12,4 +12,10 @@ $databases['default']['default'] = array(
 $settings['trusted_host_patterns'] = array(
     '.*',
 );
+
+$settings['jcms_sqs_endpoint'] = '{{ pillar.journal_cms.aws.endpoint }}';
 $settings['jcms_sqs_queue'] = '{{ pillar.journal_cms.aws.queue }}';
+$settings['jcms_sqs_region'] = '{{ pillar.journal_cms.aws.region }}';
+$settings['jcms_articles_endpoint'] = '{{ pillar.journal_cms.api.articles_endpoint }}';
+$settings['jcms_article_auth_unpublished'] = '{{ pillar.journal_cms.api.auth_unpublished }}';
+$settings['jcms_article_auth_published'] = '{{ pillar.journal_cms.api.auth_published }}';
