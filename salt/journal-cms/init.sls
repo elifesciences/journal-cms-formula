@@ -4,17 +4,6 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
-# this should have the fix https://github.com/puli/composer-plugin/pull/46
-puli-master:
-    cmd.run:
-        # install 1.0.0-beta10 at the moment
-        - name: |
-            composer global remove puli/cli
-            curl https://puli.io/installer | php
-        - user: {{ pillar.elife.deploy_user.username }}
-        - require:
-            - cmd: install-composer
-
 journal-cms-repository:
     builder.git_latest:
         - name: git@github.com:elifesciences/journal-cms.git
@@ -32,6 +21,20 @@ journal-cms-repository:
         - cwd: /srv/journal-cms
         - require:
             - builder: journal-cms-repository
+
+# this should have the fix https://github.com/puli/composer-plugin/pull/46
+puli-master:
+    cmd.run:
+        # install 1.0.0-beta10 at the moment
+        - name: |
+            composer global remove puli/cli
+            curl https://puli.io/installer | php
+        - cwd: /srv/journal-cms
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - cmd: install-composer
+            - journal-cms-repository
+
 
 web-sites-file-permissions:
     cmd.run:
