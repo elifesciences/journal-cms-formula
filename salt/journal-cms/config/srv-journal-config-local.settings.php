@@ -17,7 +17,7 @@ $settings['trusted_host_patterns'] = array(
 $settings['jcms_sqs_endpoint'] = '{{ pillar.journal_cms.aws.endpoint }}';
 {% else %}
 $settings['jcms_sqs_endpoint'] = null;
-{% end %}
+{% endif %}
 $settings['jcms_sqs_queue'] = '{{ pillar.journal_cms.aws.queue }}';
 $settings['jcms_sqs_region'] = '{{ pillar.journal_cms.aws.region }}';
 $settings['jcms_articles_endpoint'] = '{{ pillar.journal_cms.api.articles_endpoint }}';
@@ -25,9 +25,9 @@ $settings['jcms_articles_endpoint'] = '{{ pillar.journal_cms.api.articles_endpoi
 $settings['jcms_article_auth_unpublished'] = '{{ pillar.journal_cms.api.auth_unpublished }}';
 {% else %}
 $settings['jcms_article_auth_unpublished'] = null;
-{% end %}
+{% endif %}
 {% if pillar.journal_cms.api.auth_published %}
 $settings['jcms_article_auth_published'] = '{{ pillar.journal_cms.api.auth_published }}';
 {% else %}
 $settings['jcms_article_auth_published'] = null;
-{% end %}
+{% endif %}
