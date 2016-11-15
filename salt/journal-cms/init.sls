@@ -53,6 +53,7 @@ composer-install:
             - install-composer
             - web-sites-file-permissions
             - journal-cms-localhost
+            - puli-master
 
 #composer-drupal-scaffold:
 #    cmd.run:
