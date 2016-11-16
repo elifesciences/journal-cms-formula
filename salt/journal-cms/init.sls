@@ -49,9 +49,10 @@ web-sites-file-permissions:
 composer-install:
     cmd.run:
         - name: composer --no-interaction install
-        #- name: composer --no-interaction install
         - cwd: /srv/journal-cms
         - user: {{ pillar.elife.deploy_user.username }}
+        - env:
+            - COMPOSER_DISCARD_CHANGES: 1
         - require:
             - install-composer
             - web-sites-file-permissions
