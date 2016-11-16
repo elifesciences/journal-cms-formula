@@ -52,7 +52,7 @@ composer-install:
         - cwd: /srv/journal-cms
         - user: {{ pillar.elife.deploy_user.username }}
         - env:
-            - COMPOSER_DISCARD_CHANGES: 1
+            - COMPOSER_DISCARD_CHANGES: "1"
         - require:
             - install-composer
             - web-sites-file-permissions
