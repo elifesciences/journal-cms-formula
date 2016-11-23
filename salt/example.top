@@ -7,3 +7,5 @@ base:
         - elife.mysql57
         - elife.puli
         - journal-cms
+        # not used in dev:
+        #- journal-cms.processes

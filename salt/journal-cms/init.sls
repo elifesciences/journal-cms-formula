@@ -178,3 +178,14 @@ migrate-content:
         - require:
             - site-install
 
+{% set processes = ['article-import'] %}
+{% for process in processes %}
+journal-cms-{{ process }}-service:
+    file.managed:
+        - name: /etc/init/journal-cms-{{ process }}.conf
+        - source: salt://journal-cms/config/etc-init-journal-cms-{{ process }}.conf
+        - template: jinja
+        - require:
+            - site-install
+            - aws-credentials-cli
+{% endfor %}
