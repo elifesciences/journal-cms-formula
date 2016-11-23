@@ -5,7 +5,6 @@ base:
         - elife.nginx
         - elife.nginx-php7
         - elife.mysql57
-        - elife.puli
         - journal-cms
         # not used in dev:
         #- journal-cms.processes
