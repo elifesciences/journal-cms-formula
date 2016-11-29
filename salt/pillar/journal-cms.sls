@@ -15,6 +15,7 @@ journal_cms:
         region: us-east-1
         queue: null
         endpoint: http://10.0.2.2:4100
+        topic_template: arn:aws:sns:us-east-1:512686554592:bus-%s--dev
     
     api:
         articles_endpoint: null
