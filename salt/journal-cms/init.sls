@@ -190,6 +190,13 @@ journal-cms-{{ process }}-service:
             - aws-credentials-cli
 {% endfor %}
 
+restore-legacy-files:
+    cmd.run:
+        - cwd: /opt/ubr
+        - name: ./ubr.sh restore file journal-cms--platform.sh && touch /root/.legacy-restored.flag
+        - unless:
+            - test -e /root/.legacy-restored.flag
+
 #
 # 
 #
