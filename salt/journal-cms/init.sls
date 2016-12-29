@@ -1,3 +1,9 @@
+journal-cms-backups:
+    file.managed:
+        - name: /etc/ubr/journal-cms-backup.yaml
+        - source: salt://journal-cms/config/etc-ubr-journal-cms-backup.yaml
+        - template: jinja
+
 journal-cms-localhost:
     host.present:
         - ip: 127.0.0.2
@@ -194,16 +200,9 @@ restore-legacy-files:
     cmd.run:
         - cwd: /opt/ubr
         - name: ./ubr.sh restore file journal-cms--platform.sh && touch /root/.legacy-restored.flag
+        - require:
+            - file: journal-cms-backups
         - unless:
             - test -e /root/.legacy-restored.flag
 
-#
-# 
-#
-
-journal-cms-backups:
-    file.managed:
-        - name: /etc/ubr/journal-cms-backup.yaml
-        - source: salt://journal-cms/config/etc-ubr-journal-cms-backup.yaml
-        - template: jinja
 
