@@ -189,3 +189,14 @@ journal-cms-{{ process }}-service:
             - site-install
             - aws-credentials-cli
 {% endfor %}
+
+#
+# 
+#
+
+journal-cms-backups:
+    file.managed:
+        - name: /etc/ubr/journal-cms-backup.yaml
+        - source: salt://journal-cms/config/etc-ubr-journal-cms-backup.yaml
+        - template: jinja
+
