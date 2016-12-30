@@ -158,8 +158,6 @@ aws-credentials-cli:
         - group: {{ pillar.elife.deploy_user.username }}
         - makedirs: True
         - template: jinja
-        - require:
-            - site-install
 
 aws-credentials-www-data:
     file.managed:
@@ -169,8 +167,6 @@ aws-credentials-www-data:
         - group: www-data
         - makedirs: True
         - template: jinja
-        - require:
-            - site-install
 
 # populates data into the labs and subjects until they will be created through the user interface
 migrate-content:
