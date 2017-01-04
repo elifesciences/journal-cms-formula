@@ -192,13 +192,18 @@ journal-cms-{{ process }}-service:
             - aws-credentials-cli
 {% endfor %}
 
-restore-legacy-files:
-    cmd.run:
-        - cwd: /opt/ubr
-        - name: ./ubr.sh restore file journal-cms--platform.sh && touch /root/.legacy-restored.flag
-        - require:
-            - file: journal-cms-backups
-        - unless:
-            - test -e /root/.legacy-restored.flag
+
+# disabled until changes in UBR are merged into master
+#restore-legacy-files:
+#    cmd.run:
+#        - cwd: /opt/ubr
+#        - name: |
+#            set -e
+#            ./ubr.sh restore file journal-cms--platform.sh "mysql-database.legacy_cms tar-gzipped./scripts/legacy_cms_files/**"
+#            touch /root/.legacy-restored.flag
+#        - require:
+#            - file: journal-cms-backups
+#        - unless:
+#            - test -e /root/.legacy-restored.flag
 
 
