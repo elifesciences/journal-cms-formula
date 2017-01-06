@@ -7,6 +7,20 @@ $databases['default']['default'] = array(
     'password' => '{{ pillar.journal_cms.db.password }}',
     'host' => 'localhost',
     'prefix' => '',
+    'port' => '3306',
+    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+    'driver' => 'mysql',
+);
+$databases['legacy_cms']['default'] = array(
+    'driver' => 'mysql',
+    'database' => '{{ pillar.journal_cms.legacy_db.name }}',
+    'username' => '{{ pillar.journal_cms.legacy_db.user }}',
+    'password' => '{{ pillar.journal_cms.legacy_db.password }}',
+    'host' => 'localhost',
+    'prefix' => '',
+    'port' => '3306',
+    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
+    'driver' => 'mysql',
 );
 
 $settings['trusted_host_patterns'] = array(
