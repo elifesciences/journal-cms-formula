@@ -148,7 +148,7 @@ site-install:
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         # always execute for now
-        #- unless:  ../vendor/bin/drush cget system.site name
+        - unless: ../vendor/bin/drush cget system.site name
 
 aws-credentials-cli:
     file.managed:
