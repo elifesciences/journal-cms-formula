@@ -36,6 +36,7 @@ $settings['jcms_sqs_queue'] = '{{ pillar.journal_cms.aws.queue }}';
 $settings['jcms_sqs_region'] = '{{ pillar.journal_cms.aws.region }}';
 $settings['jcms_sns_topic_template'] = '{{ pillar.journal_cms.aws.topic_template }}';
 $settings['jcms_articles_endpoint'] = '{{ pillar.journal_cms.api.articles_endpoint }}';
+$settings['jcms_all_articles_endpoint'] = '{{ pillar.journal_cms.api.all_articles_endpoint }}';
 {% if pillar.journal_cms.api.auth_unpublished %}
 $settings['jcms_article_auth_unpublished'] = '{{ pillar.journal_cms.api.auth_unpublished }}';
 {% else %}
