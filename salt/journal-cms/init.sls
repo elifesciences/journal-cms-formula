@@ -206,12 +206,14 @@ journal-cms-{{ process }}-service:
 {% endfor %}
 
 
+# disabled until ubr develop -> master
 #restore-legacy-files:
 #    cmd.run:
 #        - cwd: /opt/ubr
 #        - name: |
 #            set -e
-#            ./ubr.sh restore file journal-cms--platform.sh "mysql-database.legacy_cms tar-gzipped./scripts/legacy_cms_files/**"
+#            source install.sh
+#            python -m ubr.main /etc/ubr/restore-only/ restore file journal-cms--platform.sh "mysql-database.legacy_cms tar-gzipped./scripts/legacy_cms_files/**"
 #            touch /root/.legacy-restored.flag
 #        - require:
 #            - file: journal-cms-backups
