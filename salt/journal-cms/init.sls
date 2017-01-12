@@ -5,11 +5,13 @@ journal-cms-backups:
         - source: salt://journal-cms/config/etc-ubr-journal-cms-backup.yaml
         - template: jinja
 
-# used for migrations
+# used for migrations. lives in a subdir of the ubr config 'restore-only' so 
+# we're not constantly restoring a backup of a restore ...
 legacy-journal-cms-backups:
     file.managed:
-        - name: /etc/ubr/journal-cms-legacy-backup.yaml
-        - source: salt://journal-cms/config/etc-ubr-journal-cms-legacy-backup.yaml
+        - name: /etc/ubr/restore-only/journal-cms-legacy-backup.yaml
+        - source: salt://journal-cms/config/etc-ubr-restore-only-journal-cms-legacy-backup.yaml
+        - makedirs: True
         - template: jinja
 
 journal-cms-localhost:
