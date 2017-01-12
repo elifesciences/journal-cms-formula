@@ -1,0 +1,5 @@
+tar-gzipped:
+    - /scripts/legacy_cms_files/**
+
+mysql-database:
+    - {{ pillar.journal_cms.legacy_db.name }}

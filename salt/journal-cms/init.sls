@@ -1,7 +1,15 @@
+# backups going forwards
 journal-cms-backups:
     file.managed:
         - name: /etc/ubr/journal-cms-backup.yaml
         - source: salt://journal-cms/config/etc-ubr-journal-cms-backup.yaml
+        - template: jinja
+
+# used for migrations
+legacy-journal-cms-backups:
+    file.managed:
+        - name: /etc/ubr/journal-cms-legacy-backup.yaml
+        - source: salt://journal-cms/config/etc-ubr-journal-cms-legacy-backup.yaml
         - template: jinja
 
 journal-cms-localhost:
@@ -193,7 +201,6 @@ journal-cms-{{ process }}-service:
 {% endfor %}
 
 
-# disabled until changes in UBR are merged into master
 #restore-legacy-files:
 #    cmd.run:
 #        - cwd: /opt/ubr
