@@ -6,5 +6,7 @@ base:
         - elife.nginx-php7
         - elife.mysql57
         - journal-cms
+        - api-dummy
+        - search.api-dummy
         # not used in dev:
         #- journal-cms.processes
