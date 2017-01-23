@@ -23,5 +23,5 @@ journal_cms:
         auth_unpublished: null
         auth_published: null
 
-    api_dummy:
-        standalone: False
+api_dummy:
+    standalone: False
