@@ -7,6 +7,6 @@ base:
         - elife.mysql57
         - journal-cms
         - api-dummy
-        - search.api-dummy
+        - journal-cms.api-dummy
         # not used in dev:
         #- journal-cms.processes
