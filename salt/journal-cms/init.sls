@@ -160,8 +160,15 @@ site-install:
         - name: ../vendor/bin/drush si config_installer -y
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
-        # always execute for now
         - unless: ../vendor/bin/drush cget system.site name
+
+site-configuration-import:
+    cmd.run:
+        - name: ../vendor/bin/drush -y cim
+        - cwd: /srv/jornal-cms/web/
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require: 
+            - site-install
 
 aws-credentials-cli:
     file.managed:
@@ -191,7 +198,7 @@ migrate-content:
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
-            - site-install
+            - site-configuration-import
 
 {% set processes = ['article-import'] %}
 {% for process in processes %}
@@ -201,7 +208,7 @@ journal-cms-{{ process }}-service:
         - source: salt://journal-cms/config/etc-init-journal-cms-{{ process }}.conf
         - template: jinja
         - require:
-            - site-install
+            - migrate-content
             - aws-credentials-cli
 {% endfor %}
 
