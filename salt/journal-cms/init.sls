@@ -168,7 +168,7 @@ site-install:
 site-configuration-import:
     cmd.run:
         - name: ../vendor/bin/drush -y cim
-        - cwd: /srv/jornal-cms/web/
+        - cwd: /srv/journal-cms/web/
         - user: {{ pillar.elife.deploy_user.username }}
         - require: 
             - site-install
