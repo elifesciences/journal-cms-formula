@@ -160,7 +160,10 @@ site-install:
         - name: ../vendor/bin/drush si config_installer -y
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
+        ## always perform a new site-install on dev and ci
+        {% if pillar.elife.env not in ['dev', 'ci'] %}
         - unless: ../vendor/bin/drush cget system.site name
+        {% endif %}
 
 site-configuration-import:
     cmd.run:
