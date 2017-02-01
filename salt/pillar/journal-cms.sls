@@ -21,7 +21,6 @@ journal_cms:
         articles_endpoint: null
         all_articles_endpoint: null
         auth_unpublished: null
-        auth_published: null
 
 api_dummy:
     standalone: False

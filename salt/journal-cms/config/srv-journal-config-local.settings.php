@@ -42,8 +42,3 @@ $settings['jcms_article_auth_unpublished'] = '{{ pillar.journal_cms.api.auth_unp
 {% else %}
 $settings['jcms_article_auth_unpublished'] = null;
 {% endif %}
-{% if pillar.journal_cms.api.auth_published %}
-$settings['jcms_article_auth_published'] = '{{ pillar.journal_cms.api.auth_published }}';
-{% else %}
-$settings['jcms_article_auth_published'] = null;
-{% endif %}
