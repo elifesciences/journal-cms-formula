@@ -61,6 +61,7 @@ web-sites-file-permissions:
             chmod -f 777 web/sites/default/files/css || true
             chmod -f 777 web/sites/default/files/js || true
             chmod -f 777 web/sites/default/files/styles || true
+            chmod -Rf 777 web/sites/default/files || true
         - cwd: /srv/journal-cms
         - require:
             - journal-cms-repository
