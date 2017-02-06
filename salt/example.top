@@ -1,6 +1,7 @@
 base:
     '*':
         - elife
+        - elife.external-volume
         - elife.php7
         - elife.nginx
         - elife.nginx-php7
