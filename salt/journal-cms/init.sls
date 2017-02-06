@@ -1,3 +1,24 @@
+srv-directory:
+    file.directory:
+        - name: /ext/srv
+        - require:
+            - mount-external-volume
+
+srv-directory-linked:
+    cmd.run:
+        - name: mv /srv/* /ext/srv
+        - onlyif:
+            - test ! -L /srv
+        - require:
+            - srv-directory
+
+    file.symlink:
+        - name: /srv
+        - target: /ext/srv
+        - force: True
+        - require:
+            - cmd: srv-directory-linked
+
 # backups going forwards
 journal-cms-backups:
     file.managed:
@@ -30,6 +51,8 @@ journal-cms-repository:
         - force_fetch: True
         - force_checkout: True
         - force_reset: True
+        - require:
+            - srv-directory-linked
 
     # file.directory can be a bit slow when recurring over many files
     cmd.run:
