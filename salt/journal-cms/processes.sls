@@ -1,19 +1,26 @@
-{% set processes = {'article-import': 1} %}
+{% set processes = {'article-import': 1, 'send-notifications': 1} %}
+
 {% for process, number in processes.iteritems() %}
-journal-cms-{{ process }}-task:
+{{process}}-old-restart-tasks:
+    file.absent:
+        - name: /etc/init/{{ process }}s.conf
+{% endfor %}
+
+journal-cms-processes-task:
     file.managed:
-        - name: /etc/init/journal-cms-{{ process }}s.conf
-        - source: salt://elife/config/etc-init-multiple-processes.conf
+        - name: /etc/init/journal-cms-processes.conf
+        - source: salt://elife/config/etc-init-multiple-processes-parallel.conf
         - template: jinja
         - context:
-            process: journal-cms-{{ process }}
-            number: {{ number }}
+            processes: {{ processes }}
+            timeout: 70
         - require:
-            - file: journal-cms-{{ process }}-service
+            {% for process, _number in processes.iteritems() %}
+            - file: {{ process }}-service
+            {% endfor %}
 
-journal-cms-{{ process }}-start:
+journal-cms-processes-start:
     cmd.run:
-        - name: start journal-cms-{{ process }}s
+        - name: start journal-cms-processes
         - require:
-            - journal-cms-{{ process }}-task
-{% endfor %}
+            - journal-cms-processes-task
