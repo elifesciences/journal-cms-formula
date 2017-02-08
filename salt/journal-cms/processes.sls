@@ -1,5 +1,4 @@
-{% set processes = {'article-import': 1, 'send-notifications': 1} %}
-
+{% set processes = {'journal-cms-article-import': 1, 'journal-cms-send-notifications': 1} %}
 {% for process, number in processes.iteritems() %}
 {{process}}-old-restart-tasks:
     file.absent:
