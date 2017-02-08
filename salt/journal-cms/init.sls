@@ -234,6 +234,8 @@ journal-cms-defaults-users-{{ username }}:
             ../vendor/bin/drush user-add-role "{{ user.role }}" --name={{ username }}
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
+        - unless:
+            - ../vendor/bin/drush user-information {{ username }}
         - require:
             - migrate-content
 {% endfor %}
