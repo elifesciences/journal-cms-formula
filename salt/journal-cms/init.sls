@@ -226,6 +226,18 @@ migrate-content:
         - require:
             - site-configuration-import
 
+{% for username, user in pillar.journal_cms.users.iteritems() %}
+journal-cms-defaults-users-{{ username }}:
+    cdm.run:
+        - name: |
+            ../vendor/bin/drush user-create {{ username }} --mail="{{ user.email }}" --password="{{ user.password }}"
+            ../vendor/bin/drush user-add-role "{{ user.role }}" --name={{ username }}
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - migrate-content
+{% endfor %}
+
 {% set processes = ['article-import', 'send-notifications'] %}
 {% for process in processes %}
 journal-cms-{{ process }}-service:

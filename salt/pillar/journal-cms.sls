@@ -22,5 +22,11 @@ journal_cms:
         all_articles_endpoint: null
         auth_unpublished: null
 
+    users:
+        test_user:
+            email: test_user@example.com
+            password: test_user
+            role: administrator
+
 api_dummy:
     standalone: False
