@@ -226,7 +226,7 @@ migrate-content:
         - require:
             - site-configuration-import
 
-{% set processes = ['article-import'] %}
+{% set processes = ['article-import', 'send-notifications'] %}
 {% for process in processes %}
 journal-cms-{{ process }}-service:
     file.managed:
