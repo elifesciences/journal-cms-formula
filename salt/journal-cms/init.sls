@@ -228,7 +228,7 @@ migrate-content:
 
 {% for username, user in pillar.journal_cms.users.iteritems() %}
 journal-cms-defaults-users-{{ username }}:
-    cdm.run:
+    cmd.run:
         - name: |
             ../vendor/bin/drush user-create {{ username }} --mail="{{ user.email }}" --password="{{ user.password }}"
             ../vendor/bin/drush user-add-role "{{ user.role }}" --name={{ username }}
