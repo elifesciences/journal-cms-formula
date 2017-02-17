@@ -18,8 +18,10 @@ journal_cms:
         topic_template: arn:aws:sns:us-east-1:512686554592:bus-%s--dev
     
     api:
+        gateway: null
         articles_endpoint: null
         all_articles_endpoint: null
+        article_fragment_images_endpoint: null
         auth_unpublished: null
 
     users:
