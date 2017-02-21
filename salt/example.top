@@ -6,6 +6,7 @@ base:
         - elife.nginx
         - elife.nginx-php7
         - elife.mysql57
+        - elife.redis-server
         - journal-cms
         - api-dummy
         - journal-cms.api-dummy
