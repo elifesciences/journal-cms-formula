@@ -27,8 +27,6 @@ $settings['trusted_host_patterns'] = array(
     '.*',
 );
 
-/*
- * Settings break existing journal-cms instances
 $settings['cache']['default'] = 'cache.backend.redis';
 $settings['redis.connection']['interface'] = 'PhpRedis';
 $settings['redis.connection']['host'] = '127.0.0.1';
@@ -36,7 +34,6 @@ $settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';
 $settings['cache']['bins']['discovery'] = 'cache.backend.chainedfast';
 $settings['cache']['bins']['config'] = 'cache.backend.chainedfast';
 $settings['container_yamls'][] = 'modules/redis/example.services.yml';
- */
 
 {% if pillar.journal_cms.aws.endpoint %}
 $settings['jcms_sqs_endpoint'] = '{{ pillar.journal_cms.aws.endpoint }}';
