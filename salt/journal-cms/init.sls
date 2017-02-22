@@ -120,7 +120,7 @@ site-settings:
             - composer-install
             #- composer-drupal-scaffold
         - require_in:
-            - site-install
+            - cmd: site-install
             
 {% for key in ['db', 'legacy_db'] %}
 {% set db = pillar.journal_cms[key] %}
@@ -131,7 +131,7 @@ journal-cms-{{ key }}:
         - require:
             - mysql-ready
         - require_in:
-            - site-install
+            - cmd: site-install
 
 journal-cms-{{ key }}-user:
     mysql_user.present:
