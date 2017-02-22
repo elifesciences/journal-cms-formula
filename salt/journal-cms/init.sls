@@ -142,7 +142,7 @@ journal-cms-{{ key }}-user:
         - require:
             - mysql-ready
         - require_in:
-            - site-install
+            - cmd: site-install
 
 journal-cms-{{ key }}-access:
     mysql_grants.present:
