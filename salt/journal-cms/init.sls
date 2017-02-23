@@ -45,6 +45,7 @@ journal-cms-php-extensions:
     pkg.installed:
         - pkgs:
             - php-redis
+        - refresh: True
         - require:
             - php
     
