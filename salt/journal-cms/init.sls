@@ -48,6 +48,8 @@ journal-cms-php-extensions:
         - refresh: True
         - require:
             - php
+        - watch_in:
+            - service: php-fpm
     
 
 journal-cms-repository:
