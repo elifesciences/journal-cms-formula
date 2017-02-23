@@ -27,16 +27,20 @@ $settings['trusted_host_patterns'] = array(
     '.*',
 );
 
-/*
- * Settings break existing journal-cms instances
-$settings['cache']['default'] = 'cache.backend.redis';
-$settings['redis.connection']['interface'] = 'PhpRedis';
-$settings['redis.connection']['host'] = '127.0.0.1';
-$settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';
-$settings['cache']['bins']['discovery'] = 'cache.backend.chainedfast';
-$settings['cache']['bins']['config'] = 'cache.backend.chainedfast';
-$settings['container_yamls'][] = 'modules/redis/example.services.yml';
- */
+if (!drupal_installation_attempted() && \Drupal::hasService('cache.backend.redis')) {
+  $settings['cache']['default'] = 'cache.backend.redis';
+  $settings['redis.connection']['interface'] = 'PhpRedis';
+  $settings['redis.connection']['host'] = '127.0.0.1';
+  // Always set the fast backend for bootstrap, discover and config, otherwise
+  // this gets lost when redis is enabled.
+  $settings['cache']['bins']['bootstrap'] = 'cache.backend.chainedfast';
+  $settings['cache']['bins']['discovery'] = 'cache.backend.chainedfast';
+  $settings['cache']['bins']['config'] = 'cache.backend.chainedfast';
+  $settings['container_yamls'][] = 'modules/redis/example.services.yml';
+}
+else {
+  error_log('Redis cache backend is unavailable.');
+}
 
 {% if pillar.journal_cms.aws.endpoint %}
 $settings['jcms_sqs_endpoint'] = '{{ pillar.journal_cms.aws.endpoint }}';
