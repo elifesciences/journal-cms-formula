@@ -200,13 +200,21 @@ site-install:
         - unless: ../vendor/bin/drush cget system.site name
         {% endif %}
 
+site-update-db:
+    cmd.run:
+        - name: ../vendor/bin/drush updb -y
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require: 
+            - site-install
+
 site-configuration-import:
     cmd.run:
         - name: ../vendor/bin/drush -y cim
         - cwd: /srv/journal-cms/web/
         - user: {{ pillar.elife.deploy_user.username }}
         - require: 
-            - site-install
+            - site-update-db
 
 aws-credentials-cli:
     file.managed:
