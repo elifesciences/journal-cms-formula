@@ -41,6 +41,14 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
+journal-cms-php-extensions:
+    pkg.installed:
+        - pkgs:
+            - php-redis
+        - require
+            - php
+    
+
 journal-cms-repository:
     builder.git_latest:
         - name: git@github.com:elifesciences/journal-cms.git
@@ -53,6 +61,7 @@ journal-cms-repository:
         - force_reset: True
         - require:
             - srv-directory-linked
+            - journal-cms-php-extensions
 
     # file.directory can be a bit slow when recurring over many files
     cmd.run:
