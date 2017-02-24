@@ -27,7 +27,7 @@ $settings['trusted_host_patterns'] = array(
     '.*',
 );
 
-if (!drupal_installation_attempted() && \Drupal::hasService('cache.backend.redis')) {
+if (!drupal_installation_attempted()) {
   $settings['cache']['default'] = 'cache.backend.redis';
   $settings['redis.connection']['interface'] = 'PhpRedis';
   $settings['redis.connection']['host'] = '127.0.0.1';
