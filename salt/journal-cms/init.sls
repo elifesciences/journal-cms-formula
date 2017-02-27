@@ -96,7 +96,12 @@ web-sites-file-permissions:
             chmod -f 777 web/sites/default/files/css || true
             chmod -f 777 web/sites/default/files/js || true
             chmod -f 777 web/sites/default/files/styles || true
-            chmod -f 777 web/sites/default/files || true
+            # sanitize all files to be accessible to elife and www-data
+            chown -R {{ pillar.elife.deploy_user.username }}:{{ pillar.elife.webserver.username }} web/site/default/files
+            # new subfolders will inherit the group www-data
+            chmod -f g+s 664 web/sites/default/files || true
+            # only u and g need to write now
+            chmod -f 775 web/sites/default/files || true
         - cwd: /srv/journal-cms
         - require:
             - journal-cms-repository
