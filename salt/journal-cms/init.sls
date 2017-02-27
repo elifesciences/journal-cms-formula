@@ -88,6 +88,7 @@ puli-master:
 
 
 # not minimal, but better to be too wide than having strange problems to debug
+# TODO: should be moved later in the process? (e.g. after site install)
 web-sites-file-permissions:
     cmd.run:
         - name: |
@@ -97,7 +98,7 @@ web-sites-file-permissions:
             chmod -f 777 web/sites/default/files/js || true
             chmod -f 777 web/sites/default/files/styles || true
             # sanitize all files to be accessible to elife and www-data
-            chown -R {{ pillar.elife.deploy_user.username }}:{{ pillar.elife.webserver.username }} web/site/default/files
+            chown -R {{ pillar.elife.deploy_user.username }}:{{ pillar.elife.webserver.username }} web/sites/default/files
             # new subfolders will inherit the group www-data
             chmod -f g+s 664 web/sites/default/files || true
             # only u and g need to write now
