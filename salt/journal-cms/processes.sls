@@ -1,9 +1,4 @@
 {% set processes = {'journal-cms-article-import': 1, 'journal-cms-send-notifications': 1} %}
-{% for process, number in processes.iteritems() %}
-{{process}}-old-restart-tasks:
-    file.absent:
-        - name: /etc/init/{{ process }}s.conf
-{% endfor %}
 
 journal-cms-processes-task:
     file.managed:
