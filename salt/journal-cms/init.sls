@@ -87,15 +87,16 @@ puli-master:
             - journal-cms-repository
 
 
+# not minimal, but better to be too wide than having strange problems to debug
 web-sites-file-permissions:
     cmd.run:
         - name: |
             chmod -f 755 web/sites/default || true
-            # shouldn't this be 644? This files does not seem executable
             chmod -f 755 web/sites/default/settings.php || true
             chmod -f 777 web/sites/default/files/css || true
             chmod -f 777 web/sites/default/files/js || true
             chmod -f 777 web/sites/default/files/styles || true
+            chmod -f 777 web/sites/default/files || true
         - cwd: /srv/journal-cms
         - require:
             - journal-cms-repository
