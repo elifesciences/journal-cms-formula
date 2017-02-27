@@ -89,23 +89,6 @@ puli-master:
 
 # not minimal, but better to be too wide than having strange problems to debug
 # TODO: should be moved later in the process? (e.g. after site install)
-web-sites-file-permissions:
-    cmd.run:
-        - name: |
-            chmod -f 755 web/sites/default || true
-            chmod -f 755 web/sites/default/settings.php || true
-            chmod -f 777 web/sites/default/files/css || true
-            chmod -f 777 web/sites/default/files/js || true
-            chmod -f 777 web/sites/default/files/styles || true
-            # sanitize all files to be accessible to elife and www-data
-            chown -R {{ pillar.elife.deploy_user.username }}:{{ pillar.elife.webserver.username }} web/sites/default/files
-            # new subfolders will inherit the group www-data
-            chmod -f g+s 664 web/sites/default/files || true
-            # only u and g need to write now
-            chmod -f 775 web/sites/default/files || true
-        - cwd: /srv/journal-cms
-        - require:
-            - journal-cms-repository
 
 composer-install:
     cmd.run:
@@ -116,28 +99,35 @@ composer-install:
             - COMPOSER_DISCARD_CHANGES: "1"
         - require:
             - install-composer
-            - web-sites-file-permissions
             - journal-cms-localhost
             - puli-master
 
-#composer-drupal-scaffold:
-#    cmd.run:
-#        - name: composer drupal-scaffold
-#        - cwd: /srv/journal-cms
-#        - user: {{ pillar.elife.deploy_user.username }}
-#        - require:
-#            - composer-install
+web-sites-file-permissions:
+    cmd.run:
+        - name: |
+            chmod -f 755 web/sites/default || true
+            chmod -f 664 web/sites/default/settings.php || true
+            mkdir -p web/sites/default/files
+            # sanitize all files to be accessible to elife and www-data
+            chown -R {{ pillar.elife.deploy_user.username }}:{{ pillar.elife.webserver.username }} web/sites/default/files
+            # new subfolders will inherit the group www-data
+            chmod -f g+s 664 web/sites/default/files || true
+            # only u and g need to write now
+            chmod -f 775 web/sites/default/files || true
+        - cwd: /srv/journal-cms
+        - require:
+            - composer-install
 
 site-settings:
     file.managed:
         - name: /srv/journal-cms/config/local.settings.php
         - source: salt://journal-cms/config/srv-journal-config-local.settings.php
         - template: jinja
+        - mode: 664
         - user: {{ pillar.elife.deploy_user.username }}
         - group: {{ pillar.elife.deploy_user.username }}
         - require:
-            - composer-install
-            #- composer-drupal-scaffold
+            - web-sites-file-permissions
         - require_in:
             - cmd: site-install
             
