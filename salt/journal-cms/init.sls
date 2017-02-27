@@ -207,21 +207,22 @@ site-install:
         - unless: ../vendor/bin/drush cget system.site name
         {% endif %}
 
-site-update-db:
-    cmd.run:
-        - name: ../vendor/bin/drush updb -y
-        - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
-        - require: 
-            - site-install
-
 site-configuration-import:
     cmd.run:
         - name: ../vendor/bin/drush -y cim
         - cwd: /srv/journal-cms/web/
         - user: {{ pillar.elife.deploy_user.username }}
         - require: 
-            - site-update-db
+            - site-install
+
+site-update-db:
+    cmd.run:
+        - name: ../vendor/bin/drush updb -y
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require: 
+            - site-configuration-import
+
 
 aws-credentials-cli:
     file.managed:
@@ -251,7 +252,7 @@ migrate-content:
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
-            - site-configuration-import
+            - site-update-db
 
 {% for username, user in pillar.journal_cms.users.iteritems() %}
 journal-cms-defaults-users-{{ username }}:
