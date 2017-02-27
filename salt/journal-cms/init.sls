@@ -45,6 +45,7 @@ journal-cms-php-extensions:
     pkg.installed:
         - pkgs:
             - php-redis
+            - php-uploadprogress
         - refresh: True
         - require:
             - php
