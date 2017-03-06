@@ -19,6 +19,14 @@ srv-directory-linked:
         - require:
             - cmd: srv-directory-linked
 
+tmp-directory-on-external-volume:
+    file.directory:
+        - name: /ext/tmp
+        - user: {{ pillar.elife.deploy_user.username }}
+        - group: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - mount-external-volume
+
 # backups going forwards
 journal-cms-backups:
     file.managed:
