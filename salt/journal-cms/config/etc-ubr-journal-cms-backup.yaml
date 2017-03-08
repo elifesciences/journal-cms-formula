@@ -2,4 +2,4 @@ tar-gzipped:
     - /srv/journal-cms/sites/default/files/**
 
 mysql-database:
-    - {{ pillar.journal_cms.db.name }}
+    - {{ salt['elife.cfg']('project.rds_dbname') or pillar.journal_cms.db.name }}

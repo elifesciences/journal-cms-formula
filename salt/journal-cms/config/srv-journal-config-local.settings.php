@@ -2,12 +2,12 @@
 $databases = array();
 $databases['default']['default'] = array(
     'driver' => 'mysql',
-    'database' => '{{ pillar.journal_cms.db.name }}',
+    'database' => '{{ salt['elife.cfg']('project.rds_dbname') or pillar.journal_cms.db.name }}',
     'username' => '{{ pillar.journal_cms.db.user }}',
     'password' => '{{ pillar.journal_cms.db.password }}',
-    'host' => 'localhost',
+    'host' =>     '{{ salt['elife.cfg']('cfn.outputs.RDSHost') or 'localhost' }}',
     'prefix' => '',
-    'port' => '3306',
+    'port' =>     '{{ salt['elife.cfg']('cfn.outputs.RDSPort') or '3306' }}',
     'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
     'driver' => 'mysql',
 );
