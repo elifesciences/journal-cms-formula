@@ -6,7 +6,7 @@ srv-directory:
 
 srv-directory-linked:
     cmd.run:
-        - name: mv /srv/* /ext/srv
+        - name: mkdir -p /srv/ && mv /srv/* /ext/srv
         - onlyif:
             - test ! -L /srv
         - require:
