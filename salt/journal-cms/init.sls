@@ -6,8 +6,10 @@ srv-directory:
 
 srv-directory-linked:
     cmd.run:
-        - name: mkdir -p /srv/ && mv /srv/* /ext/srv
+        - name: mv /srv/* /ext/srv
         - onlyif:
+            # /srv/ has something in it to move
+            - ls -l /srv/ | grep -v 'total 0'
             - test ! -L /srv
         - require:
             - srv-directory
