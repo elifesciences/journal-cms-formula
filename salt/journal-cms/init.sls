@@ -151,9 +151,9 @@ journal-cms-{{ key }}:
         {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
         # remote mysql
         - connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
-        - connection_pass: {{ pillar.elife.db_root.password }} # rds 'owner' pass
-        - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost')
-        - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort')
+        - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
+        - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
+        - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
 
         {% else %}
         # local mysql
@@ -174,9 +174,9 @@ journal-cms-{{ key }}-user:
         {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
         # remote mysql
         - connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
-        - connection_pass: {{ pillar.elife.db_root.password }} # rds 'owner' pass
-        - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost')
-        - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort')
+        - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
+        - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
+        - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
         
         {% else %}
         # local mysql
@@ -197,9 +197,9 @@ journal-cms-{{ key }}-access:
         {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
         # remote mysql
         - connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
-        - connection_pass: {{ pillar.elife.db_root.password }} # rds 'owner' pass
-        - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost')
-        - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort')
+        - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
+        - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
+        - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
 
         {% else %}
         - connection_pass: {{ pillar.elife.db_root.password }}
