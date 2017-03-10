@@ -172,7 +172,8 @@ journal-cms-{{ key }}-user:
 
         {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
         # remote mysql
-        - host: '10.0.2.%' # todo, fix this
+        #- host: '10.0.2.%' # todo, fix this
+        - host: '{{ salt['elife.cfg']('project.netmask') }}'
         - connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
         - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
         - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
@@ -197,7 +198,8 @@ journal-cms-{{ key }}-access:
 
         {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
         # remote mysql
-        - host: '10.0.2.%' # todo, fix this
+        #- host: '10.0.2.%' # todo, fix this
+        - host: '{{ salt['elife.cfg']('project.netmask') }}'
         - connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
         - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
         - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
