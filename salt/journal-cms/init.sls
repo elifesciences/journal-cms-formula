@@ -169,10 +169,10 @@ journal-cms-{{ key }}-user:
     mysql_user.present:
         - name: {{ db.user }}
         - password: {{ db.password }}
-        - host: localhost
 
         {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
         # remote mysql
+        - host: '10.0.2.%' # todo, fix this
         - connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
         - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
         - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
@@ -180,6 +180,7 @@ journal-cms-{{ key }}-user:
         
         {% else %}
         # local mysql
+        - host: localhost
         - connection_pass: {{ pillar.elife.db_root.password }}
         
         {% endif %}
@@ -196,12 +197,14 @@ journal-cms-{{ key }}-access:
 
         {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
         # remote mysql
+        - host: '10.0.2.%' # todo, fix this
         - connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
         - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
         - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
         - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
 
         {% else %}
+        - host: localhost # default
         - connection_pass: {{ pillar.elife.db_root.password }}
         
         {% endif %}

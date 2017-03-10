@@ -2,7 +2,7 @@
 $databases = array();
 $databases['default']['default'] = array(
     'driver' => 'mysql',
-    'database' => '{{ salt['elife.cfg']('project.rds_dbname') or pillar.journal_cms.db.name }}',
+    'database' => '{{ pillar.journal_cms.db.name }}',
     'username' => '{{ pillar.journal_cms.db.user }}',
     'password' => '{{ pillar.journal_cms.db.password }}',
     'host' =>     '{{ salt['elife.cfg']('cfn.outputs.RDSHost') or 'localhost' }}',
