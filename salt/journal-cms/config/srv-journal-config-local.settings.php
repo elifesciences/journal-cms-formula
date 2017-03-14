@@ -59,3 +59,4 @@ $settings['jcms_article_auth_unpublished'] = '{{ pillar.journal_cms.api.auth_unp
 {% else %}
 $settings['jcms_article_auth_unpublished'] = null;
 {% endif %}
+$settings['jcms_migrate_legacy_cms_images_bucket'] = 'prod-elife-legacy-cms-images';
