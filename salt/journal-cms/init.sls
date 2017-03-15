@@ -36,14 +36,9 @@ journal-cms-backups:
         - source: salt://journal-cms/config/etc-ubr-journal-cms-backup.yaml
         - template: jinja
 
-# used for migrations. lives in a subdir of the ubr config 'restore-only' so 
-# we're not constantly restoring a backup of a restore ...
 legacy-journal-cms-backups:
-    file.managed:
+    file.absent:
         - name: /etc/ubr/restore-only/journal-cms-legacy-backup.yaml
-        - source: salt://journal-cms/config/etc-ubr-restore-only-journal-cms-legacy-backup.yaml
-        - makedirs: True
-        - template: jinja
 
 journal-cms-localhost:
     host.present:
@@ -319,19 +314,11 @@ journal-cms-{{ process }}-service:
             - aws-credentials-cli
 {% endfor %}
 
-
-# disabled until ubr develop -> master
-#restore-legacy-files:
-#    cmd.run:
-#        - cwd: /opt/ubr
-#        - name: |
-#            set -e
-#            source install.sh
-#            python -m ubr.main /etc/ubr/restore-only/ restore file journal-cms--platform.sh "mysql-database.legacy_cms tar-gzipped./scripts/legacy_cms_files/**"
-#            touch /root/.legacy-restored.flag
-#        - require:
-#            - file: journal-cms-backups
-#        - unless:
-#            - test -e /root/.legacy-restored.flag
-
-
+restore-legacy-files:
+    cmd.script:
+        - name: restore-legacy-script
+        - source: salt://journal-cms/scripts/restore-legacy.sh
+        - creates: /root/legacy-restored.flag
+        - require:
+            - journal-cms-legacy_db
+            - site-install
