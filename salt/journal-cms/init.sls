@@ -85,20 +85,6 @@ journal-cms-repository:
         - require:
             - builder: journal-cms-repository
 
-# this should have the fix https://github.com/puli/composer-plugin/pull/46
-puli-master:
-    cmd.run:
-        # install 1.0.0-beta10 at the moment
-        - name: |
-            composer global remove puli/cli
-            curl https://puli.io/installer | php
-        - cwd: /srv/journal-cms
-        - user: {{ pillar.elife.deploy_user.username }}
-        - require:
-            - cmd: install-composer
-            - journal-cms-repository
-
-
 # not minimal, but better to be too wide than having strange problems to debug
 # TODO: should be moved later in the process? (e.g. after site install)
 
@@ -112,7 +98,6 @@ composer-install:
         - require:
             - install-composer
             - journal-cms-localhost
-            - puli-master
 
 web-sites-file-permissions:
     cmd.run:
