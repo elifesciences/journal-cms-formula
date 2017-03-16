@@ -278,6 +278,8 @@ aws-credentials-www-data:
         - template: jinja
 
 # populates data into the labs and subjects until they will be created through the user interface
+# TODO: this should fail, but it doesn't because drush fails silently with 0 return code
+# TODO: this needs some legacy database to be restored on this machine to be able to work, ubr should do that
 migrate-content:
     cmd.run:
         - name: |
