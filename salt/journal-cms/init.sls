@@ -312,6 +312,7 @@ journal-cms-{{ process }}-service:
             - aws-credentials-cli
 {% endfor %}
 
+# TODO: only in end2end, and whe it works prod
 restore-legacy-files:
     cmd.script:
         - name: restore-legacy-script
