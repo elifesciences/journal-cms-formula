@@ -51,6 +51,7 @@ $settings['jcms_sqs_queue'] = '{{ pillar.journal_cms.aws.queue }}';
 $settings['jcms_sqs_region'] = '{{ pillar.journal_cms.aws.region }}';
 $settings['jcms_sns_topic_template'] = '{{ pillar.journal_cms.aws.topic_template }}';
 $settings['jcms_gateway'] = '{{ pillar.journal_cms.api.gateway }}';
+$settings['jcms_articles_endpoint_for_migration'] = '{{ pillar.journal_cms.api.articles_endpoint_for_migration }}';
 $settings['jcms_articles_endpoint'] = '{{ pillar.journal_cms.api.articles_endpoint }}';
 $settings['jcms_all_articles_endpoint'] = '{{ pillar.journal_cms.api.all_articles_endpoint }}';
 $settings['jcms_article_fragment_images_endpoint'] = '{{ pillar.journal_cms.api.article_fragment_images_endpoint }}';
