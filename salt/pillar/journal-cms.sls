@@ -23,6 +23,7 @@ journal_cms:
     
     api:
         gateway: null
+        articles_endpoint_for_migration: null
         articles_endpoint: null
         all_articles_endpoint: null
         article_fragment_images_endpoint: null
