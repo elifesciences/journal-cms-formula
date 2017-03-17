@@ -60,3 +60,11 @@ $settings['jcms_article_auth_unpublished'] = '{{ pillar.journal_cms.api.auth_unp
 $settings['jcms_article_auth_unpublished'] = null;
 {% endif %}
 $settings['jcms_migrate_legacy_cms_images_bucket'] = 'prod-elife-legacy-cms-images';
+
+{% if pillar.journal_cms.iiif.base_uri %}
+$settings['jcms_iiif_base_uri'] = '{{ pillar.journal_cms.iiif.base_uri }}';
+// This folder should be relative to the sites/default/files folder.
+$settings['jcms_iiif_mount'] = '{{ pillar.journal_cms.iiif.mount }}';
+{% else %}
+$settings['jcms_iiif_base_uri'] = null;
+{% endif %}
