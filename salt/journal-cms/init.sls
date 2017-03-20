@@ -312,11 +312,12 @@ journal-cms-{{ process }}-service:
             - aws-credentials-cli
 {% endfor %}
 
-restore-legacy-files:
-    cmd.script:
-        - name: restore-legacy-script
-        - source: salt://journal-cms/scripts/restore-legacy.sh
-        - creates: /root/legacy-restored.flag
-        - require:
-            - journal-cms-legacy_db
-            - site-install
+# TODO: only in end2end, and whe it works prod
+#restore-legacy-files:
+#    cmd.script:
+#        - name: restore-legacy-script
+#        - source: salt://journal-cms/scripts/restore-legacy.sh
+#        - creates: /root/legacy-restored.flag
+#        - require:
+#            - journal-cms-legacy_db
+#            - site-install
