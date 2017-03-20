@@ -43,6 +43,7 @@ legacy-journal-cms-backups:
 journal-cms-localhost:
     host.absent:
         - name: journal-cms.local
+        - ip: 127.0.0.2
 
 journal-cms-php-extensions:
     pkg.installed:
