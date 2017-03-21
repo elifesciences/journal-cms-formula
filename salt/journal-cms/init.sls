@@ -41,9 +41,10 @@ legacy-journal-cms-backups:
         - name: /etc/ubr/restore-only/journal-cms-legacy-backup.yaml
 
 journal-cms-localhost:
-    host.absent:
-        - name: journal-cms.local
+    host.present:
         - ip: 127.0.0.2
+        - names:
+            - journal-cms.local
 
 journal-cms-php-extensions:
     pkg.installed:
