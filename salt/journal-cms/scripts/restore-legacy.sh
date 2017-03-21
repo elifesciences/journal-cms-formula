@@ -28,7 +28,10 @@ rm -rf ./legacy_cms_files/
 tar -xvzf /tmp/ubr/legacy_cms_files.tar.gz
 
 # fix up any permissions issues
+cd /srv/journal-cms/
 chown elife:elife -R ./scripts/
 
 # ensure we don't run the script again
 touch /root/legacy-restored.flag
+
+echo "[✓] legacy files restored"
