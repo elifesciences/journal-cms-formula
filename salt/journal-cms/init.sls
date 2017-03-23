@@ -312,6 +312,7 @@ journal-cms-{{ process }}-service:
             - aws-credentials-cli
 {% endfor %}
 
+{% if salt['elife.only_on_aws']() %}
 # TODO: only in end2end, and when it works prod
 restore-legacy-files:
     cmd.script:
@@ -321,3 +322,4 @@ restore-legacy-files:
         - require:
             - journal-cms-legacy_db
             - site-install
+{% endif %}
