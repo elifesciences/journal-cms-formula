@@ -259,6 +259,13 @@ site-configuration-import:
         - require: 
             - site-update-db
 
+site-cache-rebuild-again:
+    cmd.run:
+        - name: ../vendor/bin/drush cr
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - site-configuration-import
 
 aws-credentials-cli:
     file.managed:
@@ -290,7 +297,7 @@ migrate-content:
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
-            - site-configuration-import
+            - site-cache-rebuild-again
 
 {% for username, user in pillar.journal_cms.users.iteritems() %}
 journal-cms-defaults-users-{{ username }}:
