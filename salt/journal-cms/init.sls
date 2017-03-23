@@ -237,13 +237,19 @@ site-install:
         - unless: ../vendor/bin/drush cget system.site name
         {% endif %}
 
+site-cache-rebuild:
+    cmd.run:
+        - name: ../vendor/bin/drush cr
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+
 site-update-db:
     cmd.run:
         - name: ../vendor/bin/drush updatedb -y
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require: 
-            - site-install
+            - site-cache-rebuild
 
 site-configuration-import:
     cmd.run:
@@ -321,5 +327,5 @@ restore-legacy-files:
         - creates: /root/legacy-restored.flag
         - require:
             - journal-cms-legacy_db
-            - site-install
+            - site-configuration-import
 {% endif %}
