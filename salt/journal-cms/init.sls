@@ -229,7 +229,7 @@ php-cli-ini-with-fake-sendmail:
 
 site-install:
     cmd.run:
-        - name: ../vendor/bin/drush si config_installer -y
+        - name: ../vendor/bin/drush site-install config_installer -y
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         ## always perform a new site-install on dev and ci
@@ -237,22 +237,35 @@ site-install:
         - unless: ../vendor/bin/drush cget system.site name
         {% endif %}
 
-site-configuration-import:
+site-cache-rebuild:
     cmd.run:
-        - name: ../vendor/bin/drush -y cim
-        - cwd: /srv/journal-cms/web/
+        - name: ../vendor/bin/drush cr
+        - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
-        - require: 
-            - site-install
 
 site-update-db:
     cmd.run:
-        - name: ../vendor/bin/drush updb -y
+        - name: ../vendor/bin/drush updatedb -y
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require: 
-            - site-configuration-import
+            - site-cache-rebuild
 
+site-configuration-import:
+    cmd.run:
+        - name: ../vendor/bin/drush config-import -y
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require: 
+            - site-update-db
+
+site-cache-rebuild-again:
+    cmd.run:
+        - name: ../vendor/bin/drush cr
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - site-configuration-import
 
 aws-credentials-cli:
     file.managed:
@@ -284,7 +297,7 @@ migrate-content:
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
-            - site-update-db
+            - site-cache-rebuild-again
 
 {% for username, user in pillar.journal_cms.users.iteritems() %}
 journal-cms-defaults-users-{{ username }}:
@@ -312,7 +325,8 @@ journal-cms-{{ process }}-service:
             - aws-credentials-cli
 {% endfor %}
 
-# TODO: only in end2end, and whe it works prod
+{% if salt['elife.only_on_aws']() %}
+# TODO: only in end2end, and when it works prod
 restore-legacy-files:
     cmd.script:
         - name: restore-legacy-script
@@ -320,4 +334,5 @@ restore-legacy-files:
         - creates: /root/legacy-restored.flag
         - require:
             - journal-cms-legacy_db
-            - site-install
+            - site-configuration-import
+{% endif %}
