@@ -7,7 +7,7 @@ cd /opt/ubr/
 ./ubr.sh download s3 adhoc _platform.sh/legacy_cms.sql.gz _platform.sh/legacy_cms_files.tar.gz
 
 # the database can be handled with ubr
-./ubr.sh restore file adhoc /tmp/ubr/legacy_cms.sql.gz mysql-database.legacy_cms
+./ubr.sh restore file adhoc /tmp/ubr/legacy_cms.sql.gz mysql-database.elife_1_0
 
 # however the files cannot. a particular way of tar-gzipping them is done with
 # ubr that I don't expect others to know or deal with, so we'll just do it manually

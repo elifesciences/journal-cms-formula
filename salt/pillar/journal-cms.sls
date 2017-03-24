@@ -1,12 +1,12 @@
 journal_cms:
     db:
-        name: journal_cms
-        user: journal_cms
+        name: elife_2_0
+        user: elife_2_0
         password: journal_cms
 
     legacy_db:
-        name: legacy_cms
-        user: legacy_cms
+        name: elife_1_0
+        user: elife_1_0
         password: legacy_cms
 
     aws:
@@ -20,7 +20,7 @@ journal_cms:
     iiif:
         base_uri: null
         mount: null
-    
+
     api:
         gateway: null
         articles_endpoint_for_migration: null
