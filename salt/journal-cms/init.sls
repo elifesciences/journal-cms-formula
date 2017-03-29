@@ -30,6 +30,8 @@ tmp-directory-on-external-volume:
         - group: {{ pillar.elife.deploy_user.username }}
         - require:
             - mount-external-volume
+        - require_in:
+            - new-ubr-config # builder-base-formula.backups
 
 # backups going forwards
 journal-cms-backups:
