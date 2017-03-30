@@ -55,6 +55,9 @@ journal-cms-php-extensions:
         - pkgs:
             - php7.0-redis
             - php7.0-uploadprogress
+            {% if pillar.elife.env in ['ci'] %}
+            - php7.0-sqlite3
+            {% endif %}
         - install_recommends: False
         - refresh: True
         - require:
