@@ -16,9 +16,9 @@ $databases['legacy_cms']['default'] = array(
     'database' => '{{ pillar.journal_cms.legacy_db.name }}',
     'username' => '{{ pillar.journal_cms.legacy_db.user }}',
     'password' => '{{ pillar.journal_cms.legacy_db.password }}',
-    'host' => 'localhost',
+    'host' =>     '{{ salt['elife.cfg']('cfn.outputs.RDSHost') or 'localhost' }}',
     'prefix' => '',
-    'port' => '3306',
+    'port' =>     '{{ salt['elife.cfg']('cfn.outputs.RDSPort') or '3306' }}',
     'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
     'driver' => 'mysql',
 );
