@@ -301,8 +301,8 @@ migrate-content:
     # on end2end and prod machines
     cmd.run:
         - name: |
-            echo "Not ready for now"
-            #../vendor/bin/drush mi --all --execute-dependencies
+            ../vendor/bin/drush mi --all --execute-dependencies | tee drush-migrate.log
+            cat drush-migrate.log | ./check-drush-migrate-output.sh
 {% else %}
     # these migrations should be working without a dependency 
     # on the legacy database
