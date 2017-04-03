@@ -354,4 +354,6 @@ restore-legacy-files:
         - require:
             - journal-cms-legacy_db
             - site-configuration-import
+        - require_in:
+            - cmd: migrate-content
 {% endif %}
