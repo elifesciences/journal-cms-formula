@@ -1,5 +1,5 @@
 tar-gzipped:
-    - /srv/journal-cms/sites/default/files/**
+    - /srv/journal-cms/web/sites/default/files/**
 
 mysql-database:
     - {{ pillar.journal_cms.db.name }}
