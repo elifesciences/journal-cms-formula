@@ -302,7 +302,7 @@ migrate-content:
     cmd.run:
         - name: |
             ../vendor/bin/drush mi --all --execute-dependencies | tee drush-migrate.log
-            cat drush-migrate.log | ./check-drush-migrate-output.sh
+            cat drush-migrate.log | ../check-drush-migrate-output.sh
 {% else %}
     # these migrations should be working without a dependency 
     # on the legacy database
