@@ -111,7 +111,7 @@ web-sites-file-permissions:
             chown -R {{ pillar.elife.deploy_user.username }}:{{ pillar.elife.webserver.username }} web/sites/default/files
             # new subfolders will inherit the group www-data
             # and with -R even existing subfolders should have the same settings
-            chmod -Rf g+s 664 web/sites/default/files || true
+            chmod -Rf g+ws 664 web/sites/default/files || true
             # only u and g need to write now
             chmod -f 775 web/sites/default/files || true
         - cwd: /srv/journal-cms
