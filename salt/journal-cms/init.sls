@@ -108,7 +108,7 @@ web-sites-file-permissions:
             chmod -f 664 web/sites/default/settings.php || true
             mkdir -p web/sites/default/files
             # sanitize all files to be accessible to elife and www-data
-            chown -R {{ pillar.elife.deploy_user.username }}:{{ pillar.elife.webserver.username }} web/sites/default/files
+            chown -R {{ pillar.elife.webserver.username }}:{{ pillar.elife.webserver.username }} web/sites/default/files
             # new subfolders will inherit the group www-data
             # and with -R even existing subfolders should have the same settings
             chmod -Rf g+ws 664 web/sites/default/files || true
