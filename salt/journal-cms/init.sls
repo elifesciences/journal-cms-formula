@@ -295,7 +295,7 @@ aws-credentials-www-data:
 # populates data into the labs and subjects until they will be created through the user interface
 # TODO: this should fail, but it doesn't because drush fails silently with 0 return code
 
-{% if pillar.elife.env in ['end2end', 'prod'] %}
+{% if pillar.elife.env in ['continuumtest', 'prod'] %}
 migrate-content:
     # this is working through legacy databases manually restored
     # on end2end and prod machines
