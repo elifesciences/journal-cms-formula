@@ -110,7 +110,8 @@ web-sites-file-permissions:
             # sanitize all files to be accessible to elife and www-data
             chown -R {{ pillar.elife.deploy_user.username }}:{{ pillar.elife.webserver.username }} web/sites/default/files
             # new subfolders will inherit the group www-data
-            chmod -f g+s 664 web/sites/default/files || true
+            # and with -R even existing subfolders should have the same settings
+            chmod -Rf g+s 664 web/sites/default/files || true
             # only u and g need to write now
             chmod -f 775 web/sites/default/files || true
         - cwd: /srv/journal-cms
