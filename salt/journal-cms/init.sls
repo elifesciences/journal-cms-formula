@@ -313,7 +313,7 @@ migrate-content:
             ../vendor/bin/drush mi jcms_research_organisms_json
 {% end %}
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
+        - user: {{ pillar.elife.webserver.username }}
         - require:
             - site-cache-rebuild-again
 
