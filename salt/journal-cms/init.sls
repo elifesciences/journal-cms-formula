@@ -312,7 +312,7 @@ migrate-content:
             ../vendor/bin/drush mi jcms_subjects_json
             ../vendor/bin/drush mi jcms_research_focuses_json
             ../vendor/bin/drush mi jcms_research_organisms_json
-{% end %}
+{% endif %}
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.webserver.username }}
         - require:
