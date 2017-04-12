@@ -317,7 +317,6 @@ migrate-content:
         - require:
             - site-cache-rebuild-again
 
-
 {% for username, user in pillar.journal_cms.users.iteritems() %}
 journal-cms-defaults-users-{{ username }}:
     cmd.run:
