@@ -295,15 +295,26 @@ aws-credentials-www-data:
 
 # populates data into the labs and subjects until they will be created through the user interface
 # TODO: this should fail, but it doesn't because drush fails silently with 0 return code
-# TODO: this needs some legacy database to be restored on this machine to be able to work, ubr should do that
+
+{% if pillar.elife.env in ['continuumtest', 'prod'] %}
 migrate-content:
+    # this is working through legacy databases manually restored
+    # on end2end and prod machines
     cmd.run:
         - name: |
-            ../vendor/bin/drush mi jcms_labs_experiments_json
+            ../vendor/bin/drush mi --all --execute-dependencies | tee drush-migrate.log
+            cat drush-migrate.log | ../check-drush-migrate-output.sh
+{% else %}
+    # these migrations should be working without a dependency 
+    # on the legacy database
+    cmd.run:
+        - name: |
             ../vendor/bin/drush mi jcms_subjects_json
-        #- name: ../vendor/bin/drush mi --all
+            ../vendor/bin/drush mi jcms_research_focuses_json
+            ../vendor/bin/drush mi jcms_research_organisms_json
+{% end %}
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
+        - user: {{ pillar.elife.webserver.username }}
         - require:
             - site-cache-rebuild-again
 
@@ -343,4 +354,6 @@ restore-legacy-files:
         - require:
             - journal-cms-legacy_db
             - site-configuration-import
+        - require_in:
+            - cmd: migrate-content
 {% endif %}
