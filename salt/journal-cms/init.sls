@@ -129,7 +129,7 @@ site-settings:
         - require:
             - web-sites-file-permissions
         - require_in:
-            - cmd: site-install
+            - cmd: site-was-installed-check
             
 {% for key in ['db', 'legacy_db'] %}
 {% set db = pillar.journal_cms[key] %}
@@ -151,7 +151,7 @@ journal-cms-{{ key }}:
         - require:
             - mysql-ready
         - require_in:
-            - cmd: site-install
+            - cmd: site-was-installed-check
 
 journal-cms-{{ key }}-user:
     mysql_user.present:
@@ -176,7 +176,7 @@ journal-cms-{{ key }}-user:
         - require:
             - mysql-ready
         - require_in:
-            - cmd: site-install
+            - cmd: site-was-installed-check
 
 journal-cms-{{ key }}-access:
     mysql_grants.present:
@@ -202,7 +202,7 @@ journal-cms-{{ key }}-access:
             - mysql_user: journal-cms-{{ key }}-user
             - mysql_database: journal-cms-{{ key }}
         - require_in:
-            - cmd: site-install
+            - cmd: site-was-installed-check
 {% endfor %}
 
 journal-cms-vhost:
@@ -211,7 +211,7 @@ journal-cms-vhost:
         - source: salt://journal-cms/config/etc-nginx-sites-enabled-journal-cms.conf
         - template: jinja
         - require_in:
-            - site-install
+            - site-was-installed-check
         - listen_in:
             - service: nginx-server-service
             - service: php-fpm
@@ -233,6 +233,21 @@ php-cli-ini-with-fake-sendmail:
         - require:
             - php
         - require_in:
+            - site-was-installed-check
+
+site-was-installed-check-flag-remove:
+    cmd.run:
+        - name: rm -f /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag
+
+site-was-installed-check:
+    file.managed:
+        - name: /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - onlyif: ../vendor/bin/drush cget system.site name
+        - require:
+            - site-was-installed-check-flag-remove
+        - require_in: 
             - site-install
 
 site-install:
@@ -250,6 +265,8 @@ site-cache-rebuild:
         - name: ../vendor/bin/drush cr
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
+        - onlyif:
+            - test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag
 
 site-update-db:
     cmd.run:
