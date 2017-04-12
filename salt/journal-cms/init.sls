@@ -252,7 +252,9 @@ site-was-installed-check:
 
 site-install:
     cmd.run:
-        - name: ../vendor/bin/drush site-install config_installer -y
+        - name: |
+            ../vendor/bin/drush site-install config_installer -y
+            test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site-install not executed"
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         ## always perform a new site-install on dev and ci
@@ -260,21 +262,13 @@ site-install:
         - unless: ../vendor/bin/drush cget system.site name
         {% endif %}
 
-site-cache-rebuild:
-    cmd.run:
-        - name: ../vendor/bin/drush cr
-        - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
-        - onlyif:
-            - test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag
-
 site-update-db:
     cmd.run:
         - name: ../vendor/bin/drush updatedb -y
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require: 
-            - site-cache-rebuild
+            - site-install
 
 site-configuration-import:
     cmd.run:
