@@ -313,7 +313,24 @@ migrate-content:
     # on end2end and prod machines
     cmd.run:
         - name: |
-            ../vendor/bin/drush mi --all --execute-dependencies 2>&1 | tee /tmp/drush-migrate.log
+            rm -f /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_subjects_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_research_focuses_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_research_organisms_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_users_db 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_annual_reports_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_blog_articles_db 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_people_db 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_labs_experiments_db 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_labs_experiments_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_press_packages_db 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_interviews_db 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_events_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_collections_db 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_collections_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_podcast_episodes_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_covers_db 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_highlight_lists_json 2>&1 | tee --append /tmp/drush-migrate.log
             cat /tmp/drush-migrate.log | ../check-drush-migrate-output.sh
 {% else %}
     # these migrations should be working without a dependency 
