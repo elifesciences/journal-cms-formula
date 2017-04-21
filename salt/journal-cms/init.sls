@@ -244,7 +244,7 @@ site-was-installed-check:
         - name: /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
-        - onlyif: cd /srv/journal-cms/web && ../vendor/bin/drush cget system.site name
+        - onlyif: cd /srv/journal-cms/web && sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
         - require:
             - site-was-installed-check-flag-remove
         - require_in: 
