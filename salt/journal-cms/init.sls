@@ -259,7 +259,7 @@ site-install:
         - user: {{ pillar.elife.deploy_user.username }}
         ## always perform a new site-install on dev and ci
         {% if pillar.elife.env not in ['dev', 'ci'] %}
-        - unless: ../vendor/bin/drush cget system.site name
+        - unless: sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
         {% endif %}
 
 site-update-db:
@@ -355,7 +355,7 @@ journal-cms-defaults-users-{{ username }}:
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - unless:
-            - ../vendor/bin/drush user-information {{ username }}
+            - sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush user-information {{ username }}
         - require:
             - migrate-content
 {% endfor %}
