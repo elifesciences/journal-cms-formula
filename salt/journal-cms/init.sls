@@ -130,7 +130,20 @@ site-settings:
             - web-sites-file-permissions
         - require_in:
             - cmd: site-was-installed-check
-            
+
+site-services:
+    file.managed:
+        - name: /srv/journal-cms/config/local.services.yml
+        - source: salt://journal-cms/config/srv-journal-config-local.services.yml
+        - template: jinja
+        - mode: 664
+        - user: {{ pillar.elife.deploy_user.username }}
+        - group: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - web-sites-file-permissions
+        - require_in:
+            - cmd: site-was-installed-check
+
 {% for key in ['db', 'legacy_db'] %}
 {% set db = pillar.journal_cms[key] %}
 journal-cms-{{ key }}:

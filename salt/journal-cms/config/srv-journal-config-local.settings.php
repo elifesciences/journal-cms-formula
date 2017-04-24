@@ -75,6 +75,14 @@ else {
   error_log('Redis cache backend is unavailable.');
 }
 
+if (file_exists(DRUPAL_ROOT . '/../config/local.services.yml')) {
+  $settings['container_yamls'][] = DRUPAL_ROOT . '/../config/local.services.yml';
+}
+
+{% if pillar.journal_cms.files.private_path %}
+$settings['file_private_path'] = '{{ pillar.journal_cms.files.private_path }}';
+{% endif %}
+
 {% if pillar.journal_cms.aws.endpoint %}
 $settings['jcms_sqs_endpoint'] = '{{ pillar.journal_cms.aws.endpoint }}';
 {% else %}
