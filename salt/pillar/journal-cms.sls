@@ -13,7 +13,7 @@ journal_cms:
         file_path: private://monolog/
 
     files:
-        private: ./../private
+        private_path: ./../private
 
     aws:
         access_key_id: null
