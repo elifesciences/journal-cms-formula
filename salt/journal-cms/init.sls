@@ -120,7 +120,7 @@ web-sites-file-permissions:
             # log files will inherit the group ownership www-data no matter
             # which user creates them
             chmod g+ws private/monolog
-            chmod g+w private/monolog/*
+            chmod g+w private/monolog/* || true
         - cwd: /srv/journal-cms
         - require:
             - composer-install
