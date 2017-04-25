@@ -114,6 +114,13 @@ web-sites-file-permissions:
             chmod -Rf g+ws 664 web/sites/default/files || true
             # only u and g need to write now
             chmod -f 775 web/sites/default/files || true
+            # log files will be created here
+            mkdir -p private/monolog/
+            chown -R www-data:www-data private/monolog
+            # log files will inherit the group ownership www-data no matter
+            # which user creates them
+            chmod g+ws private/monolog
+            chmod g+w private/monolog/*
         - cwd: /srv/journal-cms
         - require:
             - composer-install
