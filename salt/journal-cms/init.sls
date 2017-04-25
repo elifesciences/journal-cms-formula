@@ -114,6 +114,13 @@ web-sites-file-permissions:
             chmod -Rf g+ws 664 web/sites/default/files || true
             # only u and g need to write now
             chmod -f 775 web/sites/default/files || true
+            # log files will be created here
+            mkdir -p private/monolog/
+            chown -R www-data:www-data private/monolog
+            # log files will inherit the group ownership www-data no matter
+            # which user creates them
+            chmod g+ws private/monolog
+            chmod g+w private/monolog/*
         - cwd: /srv/journal-cms
         - require:
             - composer-install
@@ -130,7 +137,20 @@ site-settings:
             - web-sites-file-permissions
         - require_in:
             - cmd: site-was-installed-check
-            
+
+site-services:
+    file.managed:
+        - name: /srv/journal-cms/config/local.services.yml
+        - source: salt://journal-cms/config/srv-journal-config-local.services.yml
+        - template: jinja
+        - mode: 664
+        - user: {{ pillar.elife.deploy_user.username }}
+        - group: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - web-sites-file-permissions
+        - require_in:
+            - cmd: site-was-installed-check
+
 {% for key in ['db', 'legacy_db'] %}
 {% set db = pillar.journal_cms[key] %}
 journal-cms-{{ key }}:

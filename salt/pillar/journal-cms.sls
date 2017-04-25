@@ -9,6 +9,12 @@ journal_cms:
         user: elife_1_0
         password: legacy_cms
 
+    logs:
+        file_path: private://monolog/
+
+    files:
+        private_path: ./../private
+
     aws:
         access_key_id: null
         secret_access_key: null
