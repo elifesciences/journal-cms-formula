@@ -332,6 +332,10 @@ migrate-content:
             ../vendor/bin/drush mi jcms_covers_db 2>&1 | tee --append /tmp/drush-migrate.log
             ../vendor/bin/drush mi jcms_highlight_lists_json 2>&1 | tee --append /tmp/drush-migrate.log
             cat /tmp/drush-migrate.log | ../check-drush-migrate-output.sh
+{% elif pillar.elife.env in ['dev'] %}
+    # local VMs do not have the legacy database
+    cmd.run:
+        - name: echo "Skipping migrate-content due to the lack of a legacy database"
 {% else %}
     # these migrations should be working without a dependency 
     # on the legacy database
