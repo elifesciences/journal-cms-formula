@@ -7,6 +7,10 @@ base:
         - elife.nginx-php7
         - elife.mysql57
         - elife.redis-server
+        # these 2 used for testing AWS interactions locally
+        - elife.golang
+        - elife.goaws
+        - elife.aws-cli
         - journal-cms
         - api-dummy
         - journal-cms.api-dummy
