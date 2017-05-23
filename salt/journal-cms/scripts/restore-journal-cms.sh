@@ -5,10 +5,12 @@ set -exv
 cd /opt/ubr/
 
 # downloads
-./ubr.sh download s3 adhoc journal-cms/201705/20170522_prod--journal-cms.elifesciences.org_230509-archive-b47198f6.tar.gz
-./ubr.sh download s3 adhoc journal-cms/201705/20170522_prod--journal-cms.elifesciences.org_230506-elife_2_0-mysql.gz
+./ubr.sh download s3 adhoc {{ pillar.journal_cms.restore.files }}
+./ubr.sh download s3 adhoc {{ pillar.journal_cms.restore.db }}
 
-# restore MySQL
-./ubr.sh restore file adhoc /ext/tmp/ubr/20170522_prod--journal-cms.elifesciences.org_230506-elife_2_0-mysql.gz mysql-database.elife_2_0
 # restore files, primarily in /srv/journal-cms/web/sites/default/files/
-tar -xvzf /ext/tmp/ubr/20170522_prod--journal-cms.elifesciences.org_230509-archive-b47198f6.tar.gz --directory /
+{% set files_basename = salt['file.basename'](pillar.journal_cms.restore.files) %}
+tar -xvzf /ext/tmp/ubr/{{ pillar.journal_cms.restore.files}} --directory /
+# restore MySQL
+{% set db_basename = salt['file.basename'](pillar.journal_cms.restore.db) %}
+./ubr.sh restore file adhoc /ext/tmp/ubr/{{ pillar.journal_cms.restore.db }} mysql-database.elife_2_0
