@@ -117,6 +117,9 @@ web-sites-file-permissions:
             # log files will be created here
             mkdir -p private/monolog/
             chown -R www-data:www-data private/monolog
+            touch private/monolog/all.json private/monolog/error.json
+            chown -R elife:www-data private/monolog/all.json private/monolog/error.json
+            chmod 664 private/monolog/all.json private/monolog/error.json
             # log files will inherit the group ownership www-data no matter
             # which user creates them
             chmod g+ws private/monolog
@@ -330,7 +333,6 @@ aws-credentials-www-data:
 migrate-content:
 {% if pillar.elife.env in ['continuumtest', 'prod'] %}
     # this is working through legacy databases manually restored
-    # on end2end and prod machines
     cmd.run:
         - name: |
             rm -f /tmp/drush-migrate.log
@@ -397,7 +399,6 @@ journal-cms-{{ process }}-service:
 {% endfor %}
 
 {% if salt['elife.only_on_aws']() %}
-# TODO: only in end2end, and when it works prod
 restore-legacy-files:
     cmd.script:
         - name: restore-legacy-script
