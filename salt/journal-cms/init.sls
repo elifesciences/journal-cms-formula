@@ -418,6 +418,7 @@ restore-legacy-files:
 #    cmd.script:
 #        - name: restore-journal-cms-script
 #        - source: salt://journal-cms/scripts/restore-journal-cms.sh
+#        - template: jinja
 #        # as late as possible
 #        - require:
 #            - cmd: migrate-content
