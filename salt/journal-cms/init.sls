@@ -412,7 +412,7 @@ restore-legacy-files:
 {% endif %}
 
 {% if pillar.elife.env == 'end2end' and  salt['elife.rev']() == 'approved' %}
-restore-legacy-files:
+restore-backup-from-production:
     cmd.script:
         - name: restore-journal-cms-script
         - source: salt://journal-cms/scripts/restore-journal-cms.sh
