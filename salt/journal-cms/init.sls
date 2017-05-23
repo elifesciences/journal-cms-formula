@@ -411,12 +411,14 @@ restore-legacy-files:
             - cmd: migrate-content
 {% endif %}
 
-{% if pillar.elife.env == 'end2end' and  salt['elife.rev']() == 'approved' %}
-restore-backup-from-production:
-    cmd.script:
-        - name: restore-journal-cms-script
-        - source: salt://journal-cms/scripts/restore-journal-cms.sh
-        # as late as possible
-        - require:
-            - cmd: migrate-content
-{% endif %}
+# disabled for now, as it leads to journal-cms linking to articles
+# that do not exist in lax--end2end
+#{% if pillar.elife.env == 'end2end' and  salt['elife.rev']() == 'approved' %}
+#restore-backup-from-production:
+#    cmd.script:
+#        - name: restore-journal-cms-script
+#        - source: salt://journal-cms/scripts/restore-journal-cms.sh
+#        # as late as possible
+#        - require:
+#            - cmd: migrate-content
+#{% endif %}
