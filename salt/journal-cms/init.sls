@@ -410,3 +410,13 @@ restore-legacy-files:
         - require_in:
             - cmd: migrate-content
 {% endif %}
+
+{% if pillar.elife.env == 'end2end' and  salt['elife.rev']() == 'approved' %}
+restore-legacy-files:
+    cmd.script:
+        - name: restore-journal-cms-script
+        - source: salt://journal-cms/scripts/restore-journal-cms.sh
+        # as late as possible
+        - require:
+            - cmd: migrate-content
+{% endif %}
