@@ -86,6 +86,8 @@ journal-cms-repository:
         - cwd: /srv/journal-cms
         - require:
             - builder: journal-cms-repository
+        - require_in:
+            - cmd: api-dummy-repository
 
 # not minimal, but better to be too wide than having strange problems to debug
 # TODO: should be moved later in the process? (e.g. after site install)
