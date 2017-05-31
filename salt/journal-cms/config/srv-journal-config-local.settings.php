@@ -111,4 +111,4 @@ $settings['jcms_iiif_mount'] = '{{ pillar.journal_cms.iiif.mount }}';
 {% else %}
 $settings['jcms_iiif_base_uri'] = null;
 {% endif %}
-$settings['jcms_rest_cache_max_age'] = 0;
+$settings['jcms_rest_cache_max_age'] = 300;
