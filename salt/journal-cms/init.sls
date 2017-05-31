@@ -356,6 +356,7 @@ migrate-content:
             ../vendor/bin/drush mi jcms_collections_json 2>&1 | tee --append /tmp/drush-migrate.log
             ../vendor/bin/drush mi jcms_podcast_episodes_json 2>&1 | tee --append /tmp/drush-migrate.log
             ../vendor/bin/drush mi jcms_covers_db 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_covers_json 2>&1 | tee --append /tmp/drush-migrate.log
             ../vendor/bin/drush mi jcms_highlight_lists_json 2>&1 | tee --append /tmp/drush-migrate.log
             cat /tmp/drush-migrate.log | ../check-drush-migrate-output.sh
 {% elif pillar.elife.env in ['dev'] %}
