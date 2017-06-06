@@ -335,42 +335,16 @@ aws-credentials-www-data:
 # TODO: this should fail, but it doesn't because drush fails silently with 0 return code
 
 migrate-content:
-{% if pillar.elife.env in ['continuumtest', 'prod'] %}
-    # this is working through legacy databases manually restored
-    cmd.run:
-        - name: |
-            rm -f /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_subjects_json 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_research_focuses_json 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_research_organisms_json 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_users_db 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_annual_reports_json 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_blog_articles_db 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_people_db 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_labs_experiments_db 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_labs_experiments_json 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_press_packages_db 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_interviews_db 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_events_json 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_collections_db 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_collections_json 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_podcast_episodes_json 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_covers_db 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_covers_json 2>&1 | tee --append /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_highlight_lists_json 2>&1 | tee --append /tmp/drush-migrate.log
-            cat /tmp/drush-migrate.log | ../check-drush-migrate-output.sh
-{% elif pillar.elife.env in ['dev'] %}
+{% if pillar.elife.env in ['dev'] %}
     # local VMs do not have the legacy database
     cmd.run:
         - name: echo "Skipping migrate-content due to the lack of a legacy database"
 {% else %}
-    # these migrations should be working without a dependency 
-    # on the legacy database
     cmd.run:
         - name: |
-            ../vendor/bin/drush mi jcms_subjects_json
-            ../vendor/bin/drush mi jcms_research_focuses_json
-            ../vendor/bin/drush mi jcms_research_organisms_json
+            rm -f /tmp/drush-migrate.log
+            ../vendor/bin/drush mi jcms_subjects_json 2>&1 | tee --append /tmp/drush-migrate.log
+            cat /tmp/drush-migrate.log | ../check-drush-migrate-output.sh
 {% endif %}
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.webserver.username }}
