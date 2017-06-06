@@ -96,7 +96,13 @@ journal-cms-repository:
 
 composer-install:
     cmd.run:
-        - name: composer --no-interaction install
+        {% if pillar.elife.env in ['prod', 'end2end', 'continuumtest'] %}
+        - name: composer --no-interaction install --optimize-autoloader --no-dev
+        {% elif pillar.elife.env != 'dev' %}
+        - name: composer --no-interaction install --optimize-autoloader
+        {% else %}
+        - name: composer --no-interaction install 
+        {% endif %}
         - cwd: /srv/journal-cms
         - user: {{ pillar.elife.deploy_user.username }}
         - env:
