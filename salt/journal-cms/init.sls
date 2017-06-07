@@ -364,7 +364,7 @@ migrate-content:
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.webserver.username }}
         - require:
-            - site-cache-rebuild-again
+            - site-permissions-rebuild
 
 {% for username, user in pillar.journal_cms.users.iteritems() %}
 journal-cms-defaults-users-{{ username }}:
