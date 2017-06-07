@@ -249,14 +249,11 @@ journal-cms-vhost:
             - service: nginx-server-service
             - service: php-fpm
 
-{% if salt['elife.cfg']('cfn.outputs.DomainName') %}
 non-https-redirect:
-    file.symlink:
+    file.absent:
         - name: /etc/nginx/sites-enabled/unencrypted-redirect.conf
-        - target: /etc/nginx/sites-available/unencrypted-redirect.conf
         - require:
             - journal-cms-vhost
-{% endif %}
 
 # when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
