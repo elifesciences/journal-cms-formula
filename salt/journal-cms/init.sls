@@ -320,7 +320,8 @@ site-cache-rebuild-again:
             - site-configuration-import
 
 site-permissions-rebuild:
-    cmd.run: ../vendor/bin/drush php-eval "node_access_rebuild();"
+    cmd.run: 
+        - name: ../vendor/bin/drush php-eval "node_access_rebuild();"
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - onlyif: cd /srv/journal-cms/web && [[ $(sudo -u {{ pillar.elife.deploy_user.username }} ../vendor/bin/drush php-eval "print node_access_needs_rebuild()") == "1" ]]
