@@ -10,7 +10,7 @@ cd /opt/ubr/
 
 # restore files, primarily in /srv/journal-cms/web/sites/default/files/
 {% set files_basename = salt['file.basename'](pillar.journal_cms.restore.files) %}
-tar -xvzf /ext/tmp/ubr/{{ pillar.journal_cms.restore.files}} --directory /
+tar -xvzf /ext/tmp/ubr/{{ files_basename }} --directory /
 # restore MySQL
 {% set db_basename = salt['file.basename'](pillar.journal_cms.restore.db) %}
-./ubr.sh restore file adhoc /ext/tmp/ubr/{{ pillar.journal_cms.restore.db }} mysql-database.elife_2_0
+./ubr.sh restore file adhoc /ext/tmp/ubr/{{ db_basename }} mysql-database.elife_2_0
