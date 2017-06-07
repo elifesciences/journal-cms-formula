@@ -316,6 +316,15 @@ site-cache-rebuild-again:
         - require:
             - site-configuration-import
 
+site-permissions-rebuild:
+    cmd.run: 
+        - name: ../vendor/bin/drush php-eval "node_access_rebuild();"
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - onlyif: cd /srv/journal-cms/web && [[ $(sudo -u {{ pillar.elife.deploy_user.username }} ../vendor/bin/drush php-eval "print node_access_needs_rebuild()") == "1" ]]
+        - require:
+            - site-cache-rebuild-again
+
 aws-credentials-cli:
     file.managed:
         - name: /home/{{ pillar.elife.deploy_user.username }}/.aws/credentials
@@ -352,7 +361,7 @@ migrate-content:
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.webserver.username }}
         - require:
-            - site-cache-rebuild-again
+            - site-permissions-rebuild
 
 {% for username, user in pillar.journal_cms.users.iteritems() %}
 journal-cms-defaults-users-{{ username }}:
