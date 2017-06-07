@@ -11,17 +11,6 @@ $databases['default']['default'] = array(
     'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
     'driver' => 'mysql',
 );
-$databases['legacy_cms']['default'] = array(
-    'driver' => 'mysql',
-    'database' => '{{ pillar.journal_cms.legacy_db.name }}',
-    'username' => '{{ pillar.journal_cms.legacy_db.user }}',
-    'password' => '{{ pillar.journal_cms.legacy_db.password }}',
-    'host' =>     '{{ salt['elife.cfg']('cfn.outputs.RDSHost') or 'localhost' }}',
-    'prefix' => '',
-    'port' =>     '{{ salt['elife.cfg']('cfn.outputs.RDSPort') or '3306' }}',
-    'namespace' => 'Drupal\\Core\\Database\\Driver\\mysql',
-    'driver' => 'mysql',
-);
 
 $settings['trusted_host_patterns'] = array(
     '.*',
@@ -102,7 +91,6 @@ $settings['jcms_article_auth_unpublished'] = '{{ pillar.journal_cms.api.auth_unp
 {% else %}
 $settings['jcms_article_auth_unpublished'] = null;
 {% endif %}
-$settings['jcms_migrate_legacy_cms_images_bucket'] = 'prod-elife-legacy-cms-images';
 
 {% if pillar.journal_cms.iiif.base_uri %}
 $settings['jcms_iiif_base_uri'] = '{{ pillar.journal_cms.iiif.base_uri }}';

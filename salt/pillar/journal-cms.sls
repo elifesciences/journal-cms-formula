@@ -4,11 +4,6 @@ journal_cms:
         user: elife_2_0
         password: journal_cms
 
-    legacy_db:
-        name: elife_1_0
-        user: elife_1_0
-        password: legacy_cms
-
     logs:
         file_path: private://monolog/
 

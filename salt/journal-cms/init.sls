@@ -164,7 +164,7 @@ site-services:
         - require_in:
             - cmd: site-was-installed-check
 
-{% for key in ['db', 'legacy_db'] %}
+{% for key in ['db'] %}
 {% set db = pillar.journal_cms[key] %}
 journal-cms-{{ key }}:
     mysql_database.present:
@@ -347,17 +347,11 @@ aws-credentials-www-data:
 # TODO: this should fail, but it doesn't because drush fails silently with 0 return code
 
 migrate-content:
-{% if pillar.elife.env in ['dev'] %}
-    # local VMs do not have the legacy database
-    cmd.run:
-        - name: echo "Skipping migrate-content due to the lack of a legacy database"
-{% else %}
     cmd.run:
         - name: |
             rm -f /tmp/drush-migrate.log
             ../vendor/bin/drush mi jcms_subjects_json 2>&1 | tee --append /tmp/drush-migrate.log
             cat /tmp/drush-migrate.log | ../check-drush-migrate-output.sh
-{% endif %}
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.webserver.username }}
         - require:
@@ -388,19 +382,6 @@ journal-cms-{{ process }}-service:
             - migrate-content
             - aws-credentials-cli
 {% endfor %}
-
-{% if salt['elife.only_on_aws']() %}
-restore-legacy-files:
-    cmd.script:
-        - name: restore-legacy-script
-        - source: salt://journal-cms/scripts/restore-legacy.sh
-        - creates: /root/legacy-restored.flag
-        - require:
-            - journal-cms-legacy_db
-            - site-configuration-import
-        - require_in:
-            - cmd: migrate-content
-{% endif %}
 
 # disabled for now, as it leads to journal-cms linking to articles
 # that do not exist in lax--end2end
