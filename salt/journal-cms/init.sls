@@ -379,6 +379,15 @@ journal-cms-{{ process }}-service:
             - aws-credentials-cli
 {% endfor %}
 
+journal-cms-warmup-on-boot:
+    file.managed:
+        - name: /etc/init/journal-cms-warmup.conf
+        - source: salt://journal-cms/config/etc-init-journal-cms-warmup.conf
+        - template: jinja
+        - require:
+            - migrate-content
+            - aws-credentials-cli
+
 # disabled for now, as it leads to journal-cms linking to articles
 # that do not exist in lax--end2end
 #{% if pillar.elife.env == 'end2end' and  salt['elife.rev']() == 'approved' %}
