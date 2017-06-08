@@ -40,10 +40,6 @@ journal-cms-backups:
         - source: salt://journal-cms/config/etc-ubr-journal-cms-backup.yaml
         - template: jinja
 
-legacy-journal-cms-backups:
-    file.absent:
-        - name: /etc/ubr/restore-only/journal-cms-legacy-backup.yaml
-
 journal-cms-localhost:
     host.present:
         - ip: 127.0.0.2
