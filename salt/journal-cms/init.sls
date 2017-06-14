@@ -39,6 +39,7 @@ journal-cms-backups:
         - name: /etc/ubr/journal-cms-backup.yaml
         - source: salt://journal-cms/config/etc-ubr-journal-cms-backup.yaml
         - template: jinja
+        - makedirs: True
 
 journal-cms-localhost:
     host.present:
