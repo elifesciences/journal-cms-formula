@@ -1,38 +1,3 @@
-srv-directory:
-    file.directory:
-        - name: /ext/srv
-        - require:
-            - mount-external-volume
-        - require_in:
-            - file: new-ubr-config
-
-srv-directory-linked:
-    cmd.run:
-        - name: mv /srv/* /ext/srv
-        - onlyif:
-            # /srv/ has something in it to move
-            - ls -l /srv/ | grep -v 'total 0'
-            - test ! -L /srv
-        - require:
-            - srv-directory
-
-    file.symlink:
-        - name: /srv
-        - target: /ext/srv
-        - force: True
-        - require:
-            - cmd: srv-directory-linked
-
-tmp-directory-on-external-volume:
-    file.directory:
-        - name: /ext/tmp
-        - user: {{ pillar.elife.deploy_user.username }}
-        - group: {{ pillar.elife.deploy_user.username }}
-        - require:
-            - mount-external-volume
-        - require_in:
-            - new-ubr-config # builder-base-formula.backups
-
 # backups going forwards
 journal-cms-backups:
     file.managed:
