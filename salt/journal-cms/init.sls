@@ -246,7 +246,7 @@ site-install:
     cmd.run:
         - name: |
             ../vendor/bin/drush site-install config_installer -y
-            test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site-install not executed"
+            test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         ## always perform a new site-install on dev and ci
