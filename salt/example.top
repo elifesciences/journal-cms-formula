@@ -4,6 +4,7 @@ base:
         - elife.external-volume
         - elife.external-volume-srv
         - elife.php7
+        - elife.composer
         - elife.nginx
         - elife.nginx-php7
         - elife.mysql57
