@@ -70,6 +70,7 @@ composer-install:
         - env:
             - COMPOSER_DISCARD_CHANGES: "1"
         - require:
+            - journal-cms-repository
             - install-composer
             - journal-cms-localhost
 
