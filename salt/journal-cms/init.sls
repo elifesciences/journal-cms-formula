@@ -250,6 +250,8 @@ site-install:
             test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - journal-cms-repository
         ## always perform a new site-install on dev and ci
         {% if pillar.elife.env not in ['dev', 'ci'] %}
         - unless: sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
