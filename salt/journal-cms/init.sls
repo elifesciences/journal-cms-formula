@@ -13,15 +13,12 @@ journal-cms-localhost:
             - journal-cms.local
 
 journal-cms-php-extensions:
-    pkg.installed:
-        - pkgs:
-            - php7.0-redis
-            - php7.0-uploadprogress
+    cmd.run:
+        - name: |
+            apt-get --no-install-recommends install php7.0-redis php7.0-igbinary php7.0-uploadprogress 
             {% if pillar.elife.env in ['ci'] %}
-            - php7.0-sqlite3
+            apt-get install php7.0-sqlite3
             {% endif %}
-        - install_recommends: False
-        - refresh: True
         - require:
             - php
         - watch_in:
