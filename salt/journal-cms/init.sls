@@ -15,9 +15,9 @@ journal-cms-localhost:
 journal-cms-php-extensions:
     cmd.run:
         - name: |
-            apt-get --no-install-recommends install php7.0-redis php7.0-igbinary php7.0-uploadprogress 
+            apt-get -y --no-install-recommends install php7.0-redis php7.0-igbinary php7.0-uploadprogress 
             {% if pillar.elife.env in ['ci'] %}
-            apt-get install php7.0-sqlite3
+            apt-get -y install php7.0-sqlite3
             {% endif %}
         - require:
             - php
