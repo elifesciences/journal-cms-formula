@@ -354,6 +354,11 @@ journal-cms-warmup-on-boot:
             - migrate-content
             - aws-credentials-cli
 
+logrotate-monolog:
+    file.managed:
+        - name: /etc/logrotate.d/journal-cms
+        - source: salt://journal-cms/config/etc-logrotate.d-journal-cms
+
 # disabled for now, as it leads to journal-cms linking to articles
 # that do not exist in lax--end2end
 #{% if pillar.elife.env == 'end2end' and  salt['elife.rev']() == 'approved' %}

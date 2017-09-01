@@ -1,0 +1,8 @@
+/srv/journal-cms/private/monolog/*.json {
+    daily
+    rotate 7
+    notifempty
+    missingok
+    compress
+    copytruncate
+}
