@@ -135,11 +135,6 @@ journal-cms-{{ key }}:
         - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
         - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
         - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
-
-        {% else %}
-        # local mysql
-        - connection_pass: {{ pillar.elife.db_root.password }}
-
         {% endif %}
         - require:
             - mysql-ready
@@ -163,7 +158,6 @@ journal-cms-{{ key }}-user:
         {% else %}
         # local mysql
         - host: localhost
-        - connection_pass: {{ pillar.elife.db_root.password }}
         
         {% endif %}
         - require:
@@ -188,7 +182,6 @@ journal-cms-{{ key }}-access:
 
         {% else %}
         - host: localhost # default
-        - connection_pass: {{ pillar.elife.db_root.password }}
         
         {% endif %}
         - require:
