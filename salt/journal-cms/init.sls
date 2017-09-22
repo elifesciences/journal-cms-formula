@@ -326,12 +326,16 @@ journal-cms-defaults-users-{{ username }}:
             - migrate-content
 {% endfor %}
 
-{% set processes = ['article-import', 'send-notifications'] %}
-{% for process in processes %}
-journal-cms-{{ process }}-service:
+{% for process in ['article-import', 'send-notifications'] %}
+journal-cms-{{ process }}-init:
     file.managed:
+        {% if salt['grains.get']('oscodename') == 'trusty' %}
         - name: /etc/init/journal-cms-{{ process }}.conf
         - source: salt://journal-cms/config/etc-init-journal-cms-{{ process }}.conf
+        {% else %}
+        - name: /lib/systemd/system/journal-cms-{{ process }}@.service
+        - source: salt://journal-cms/config/lib-systemd-system-journal-cms-{{ process }}@.service
+        {% endif %}
         - template: jinja
         - require:
             - migrate-content
