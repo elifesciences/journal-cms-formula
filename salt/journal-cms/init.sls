@@ -204,7 +204,7 @@ journal-cms-vhost:
         - source: salt://journal-cms/config/etc-nginx-sites-enabled-journal-cms.conf
         - template: jinja
         - require_in:
-            - site-was-installed-check
+            - cmd: site-was-installed-check
         - listen_in:
             - service: nginx-server-service
             - service: php-fpm
@@ -223,7 +223,7 @@ php-cli-ini-with-fake-sendmail:
         - require:
             - php
         - require_in:
-            - site-was-installed-check
+            - cmd: site-was-installed-check
 
 site-was-installed-check-flag-remove:
     cmd.run:
@@ -238,7 +238,7 @@ site-was-installed-check:
         - require:
             - site-was-installed-check-flag-remove
         - require_in: 
-            - site-install
+            - cmd: site-install
 
 site-install:
     cmd.run:
