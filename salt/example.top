@@ -15,4 +15,5 @@ base:
         - api-dummy
         - journal-cms.api-dummy
         # not used in dev:
+        #- journal-cms.cron
         #- journal-cms.processes
