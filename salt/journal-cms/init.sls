@@ -245,7 +245,8 @@ site-install:
         - name: |
             ../vendor/bin/drush site-install config_installer -y
             ####test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
-            ../vendor/bin/drush cr || true # may fail with "You have requested a non-existent service "cache.backend.redis"
+            #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
+            redis-cli flushall
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
