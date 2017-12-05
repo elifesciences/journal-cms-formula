@@ -126,6 +126,17 @@ site-services:
 
 {% for key in ['db'] %}
 {% set db = pillar.journal_cms[key] %}
+
+{% if pillar.elife.env in ['dev', 'ci'] %}
+journal-cms-{{ key }}-reset:
+    mysql_database.absent:
+        - name: {{ db.name }}
+        # local mysql only, RDS not supported, don't mess with that
+        - connection_pass: {{ pillar.elife.db_root.password }}
+        - require_in:
+            - mysql_database: journal-cms-{{ key }}
+{% endif %}
+
 journal-cms-{{ key }}:
     mysql_database.present:
         - name: {{ db.name }}
