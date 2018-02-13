@@ -76,6 +76,7 @@ web-sites-file-permissions:
         - name: |
             chmod -f 755 web/sites/default || true
             chmod -f 664 web/sites/default/settings.php || true
+            chmod -f 664 web/sites/default/services.yml || true
             mkdir -p web/sites/default/files
             # sanitize all files to be accessible to elife and www-data
             chown -R {{ pillar.elife.webserver.username }}:{{ pillar.elife.webserver.username }} web/sites/default/files
