@@ -10,6 +10,10 @@ journal_cms:
     files:
         private_path: ./../private
 
+    journal:
+        base_uri: null
+        preview_uri: null
+
     aws:
         access_key_id: null
         secret_access_key: null

@@ -72,6 +72,13 @@ if (file_exists(DRUPAL_ROOT . '/../config/local.services.yml')) {
 $settings['file_private_path'] = '{{ pillar.journal_cms.files.private_path }}';
 {% endif %}
 
+{% if pillar.journal_cms.journal.base_uri %}
+$settings['journal_path'] = '{{ pillar.journal_cms.journal.base_uri }}';
+{% endif %}
+{% if pillar.journal_cms.journal.preview_uri %}
+$settings['journal_preview'] = '{{ pillar.journal_cms.journal.preview_uri }}';
+{% endif %}
+
 {% if pillar.journal_cms.aws.endpoint %}
 $settings['jcms_sqs_endpoint'] = '{{ pillar.journal_cms.aws.endpoint }}';
 {% else %}
