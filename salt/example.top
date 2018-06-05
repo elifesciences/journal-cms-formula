@@ -16,6 +16,8 @@ base:
         - journal-cms
         - api-dummy
         - journal-cms.api-dummy
+        # for CI or wherever composer update is needed
+        - elife.swapspace
         # not used in dev:
         #- journal-cms.cron
         #- journal-cms.processes
