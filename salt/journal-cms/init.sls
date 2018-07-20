@@ -376,7 +376,7 @@ logrotate-monolog:
 syslog-ng-for-journal-cms-logs:
     file.managed:
         - name: /etc/syslog-ng/conf.d/journal-cms.conf
-        - source: salt://journal/config/etc-syslog-ng-conf.d-journal-cms.conf
+        - source: salt://journal-cms/config/etc-syslog-ng-conf.d-journal-cms.conf
         - template: jinja
         - require:
             - pkg: syslog-ng
