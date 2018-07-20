@@ -373,6 +373,17 @@ logrotate-monolog:
         - name: /etc/logrotate.d/journal-cms
         - source: salt://journal-cms/config/etc-logrotate.d-journal-cms
 
+syslog-ng-for-journal-cms-logs:
+    file.managed:
+        - name: /etc/syslog-ng/conf.d/journal-cms.conf
+        - source: salt://journal-cms/config/etc-syslog-ng-conf.d-journal-cms.conf
+        - template: jinja
+        - require:
+            - pkg: syslog-ng
+            - site-install
+        - listen_in:
+            - service: syslog-ng
+
 # disabled for now, as it leads to journal-cms linking to articles
 # that do not exist in lax--end2end
 #{% if pillar.elife.env == 'end2end' and  salt['elife.rev']() == 'approved' %}
