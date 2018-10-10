@@ -31,6 +31,7 @@ journal_cms:
         articles_endpoint_for_migration: null
         articles_endpoint: null
         metrics_endpoint: null
+        digests_endpoint: null
         all_articles_endpoint: null
         article_fragment_images_endpoint: null
         auth_unpublished: null
