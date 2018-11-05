@@ -384,6 +384,18 @@ syslog-ng-for-journal-cms-logs:
         - listen_in:
             - service: syslog-ng
 
+
+{% if pillar.elife.env == 'end2end' %}
+populate-people-api-with-fixtures:
+    cmd.script:
+        - name: ../vendor/bin/drush create-person reviewing-editor "Higgins" --given="Henry" --email="henry.higgins@myfairlady.co.uk" --match
+        # as late as possible
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - cmd: migrate-content
+{% endif %}
+
 # disabled for now, as it leads to journal-cms linking to articles
 # that do not exist in lax--end2end
 #{% if pillar.elife.env == 'end2end' and  salt['elife.rev']() == 'approved' %}
