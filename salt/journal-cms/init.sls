@@ -388,7 +388,11 @@ syslog-ng-for-journal-cms-logs:
 {% if pillar.elife.env == 'end2end' %}
 populate-people-api-with-fixtures:
     cmd.run:
-        - name: ../vendor/bin/drush create-person reviewing-editor "Higgins" --given="Henry" --email="henry.higgins@myfairlady.co.uk" --upsert
+        - name: |
+            ../vendor/bin/drush create-person senior-editor "Frankenstein" --given="Victor" --email="victor.frankenstein@ingolstadt.de" --upsert
+            ../vendor/bin/drush create-person senior-editor "Brown" --given="Emmett" --email="emmett.brown@hillvalley.usc.edu" --upsert
+            ../vendor/bin/drush create-person reviewing-editor "Higgins" --given="Henry" --email="henry.higgins@myfairlady.co.uk" --upsert
+            ../vendor/bin/drush create-person reviewing-editor "Calvin" --given="Susan" --email="susan.calvin@usrobots.com" --upsert
         # as late as possible
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
