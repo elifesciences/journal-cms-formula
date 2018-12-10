@@ -44,6 +44,7 @@ journal_cms:
 
     consumer_groups_filter:
         api_gateway:
+            username: api_gateway_username
             password: api_gateway_password
 
     restore:
