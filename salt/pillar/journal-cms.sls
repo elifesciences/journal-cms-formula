@@ -10,6 +10,10 @@ journal_cms:
     files:
         private_path: ./../private
 
+    journal:
+        base_uri: null
+        preview_uri: null
+
     aws:
         access_key_id: null
         secret_access_key: null
@@ -28,6 +32,7 @@ journal_cms:
         articles_endpoint: null
         metrics_endpoint: null
         all_articles_endpoint: null
+        all_digests_endpoint: null
         article_fragment_images_endpoint: null
         auth_unpublished: null
 
@@ -36,6 +41,11 @@ journal_cms:
             email: test_user@example.com
             password: test_user
             role: administrator
+
+    consumer_groups_filter:
+        api_gateway:
+            username: api_gateway_username
+            password: api_gateway_password
 
     restore:
         files: journal-cms/201705/20170522_prod--journal-cms.elifesciences.org_230509-archive-b47198f6.tar.gz

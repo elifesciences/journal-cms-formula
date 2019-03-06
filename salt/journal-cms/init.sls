@@ -76,6 +76,7 @@ web-sites-file-permissions:
         - name: |
             chmod -f 755 web/sites/default || true
             chmod -f 664 web/sites/default/settings.php || true
+            chmod -f 664 web/sites/default/services.yml || true
             mkdir -p web/sites/default/files
             # sanitize all files to be accessible to elife and www-data
             chown -R {{ pillar.elife.webserver.username }}:{{ pillar.elife.webserver.username }} web/sites/default/files
@@ -126,6 +127,17 @@ site-services:
 
 {% for key in ['db'] %}
 {% set db = pillar.journal_cms[key] %}
+
+{% if pillar.elife.env in ['dev', 'ci'] %}
+journal-cms-{{ key }}-reset:
+    mysql_database.absent:
+        - name: {{ db.name }}
+        # local mysql only, RDS not supported, don't mess with that
+        - connection_pass: {{ pillar.elife.db_root.password }}
+        - require_in:
+            - mysql_database: journal-cms-{{ key }}
+{% endif %}
+
 journal-cms-{{ key }}:
     mysql_database.present:
         - name: {{ db.name }}
@@ -197,7 +209,7 @@ journal-cms-vhost:
         - source: salt://journal-cms/config/etc-nginx-sites-enabled-journal-cms.conf
         - template: jinja
         - require_in:
-            - site-was-installed-check
+            - cmd: site-was-installed-check
         - listen_in:
             - service: nginx-server-service
             - service: php-fpm
@@ -216,7 +228,7 @@ php-cli-ini-with-fake-sendmail:
         - require:
             - php
         - require_in:
-            - site-was-installed-check
+            - cmd: site-was-installed-check
 
 site-was-installed-check-flag-remove:
     cmd.run:
@@ -231,13 +243,15 @@ site-was-installed-check:
         - require:
             - site-was-installed-check-flag-remove
         - require_in: 
-            - site-install
+            - cmd: site-install
 
 site-install:
     cmd.run:
         - name: |
             ../vendor/bin/drush site-install config_installer -y
-            test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
+            ####test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
+            #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
+            redis-cli flushall
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
@@ -355,6 +369,33 @@ logrotate-monolog:
     file.managed:
         - name: /etc/logrotate.d/journal-cms
         - source: salt://journal-cms/config/etc-logrotate.d-journal-cms
+
+syslog-ng-for-journal-cms-logs:
+    file.managed:
+        - name: /etc/syslog-ng/conf.d/journal-cms.conf
+        - source: salt://journal-cms/config/etc-syslog-ng-conf.d-journal-cms.conf
+        - template: jinja
+        - require:
+            - pkg: syslog-ng
+            - site-install
+        - listen_in:
+            - service: syslog-ng
+
+
+{% if pillar.elife.env == 'end2end' %}
+populate-people-api-with-fixtures:
+    cmd.run:
+        - name: |
+            ../vendor/bin/drush create-person senior-editor "Frankenstein" --given="Victor" --email="victor.frankenstein@ingolstadt.de" --upsert
+            ../vendor/bin/drush create-person senior-editor "Brown" --given="Emmett" --email="emmett.brown@hillvalley.usc.edu" --upsert
+            ../vendor/bin/drush create-person reviewing-editor "Higgins" --given="Henry" --email="henry.higgins@myfairlady.co.uk" --upsert
+            ../vendor/bin/drush create-person reviewing-editor "Calvin" --given="Susan" --email="susan.calvin@usrobots.com" --upsert
+        # as late as possible
+        - cwd: /srv/journal-cms/web
+        - user: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - cmd: migrate-content
+{% endif %}
 
 # disabled for now, as it leads to journal-cms linking to articles
 # that do not exist in lax--end2end

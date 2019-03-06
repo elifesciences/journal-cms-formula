@@ -72,6 +72,13 @@ if (file_exists(DRUPAL_ROOT . '/../config/local.services.yml')) {
 $settings['file_private_path'] = '{{ pillar.journal_cms.files.private_path }}';
 {% endif %}
 
+{% if pillar.journal_cms.journal.base_uri %}
+$settings['journal_path'] = '{{ pillar.journal_cms.journal.base_uri }}';
+{% endif %}
+{% if pillar.journal_cms.journal.preview_uri %}
+$settings['journal_preview'] = '{{ pillar.journal_cms.journal.preview_uri }}';
+{% endif %}
+
 {% if pillar.journal_cms.aws.endpoint %}
 $settings['jcms_sqs_endpoint'] = '{{ pillar.journal_cms.aws.endpoint }}';
 {% else %}
@@ -84,6 +91,7 @@ $settings['jcms_gateway'] = '{{ pillar.journal_cms.api.gateway }}';
 $settings['jcms_articles_endpoint_for_migration'] = '{{ pillar.journal_cms.api.articles_endpoint_for_migration }}';
 $settings['jcms_articles_endpoint'] = '{{ pillar.journal_cms.api.articles_endpoint }}';
 $settings['jcms_metrics_endpoint'] = '{{ pillar.journal_cms.api.metrics_endpoint }}';
+$settings['jcms_all_digests_endpoint'] = '{{ pillar.journal_cms.api.all_digests_endpoint }}';
 $settings['jcms_all_articles_endpoint'] = '{{ pillar.journal_cms.api.all_articles_endpoint }}';
 $settings['jcms_article_fragment_images_endpoint'] = '{{ pillar.journal_cms.api.article_fragment_images_endpoint }}';
 {% if pillar.journal_cms.api.auth_unpublished %}
