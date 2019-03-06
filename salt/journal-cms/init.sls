@@ -1,3 +1,11 @@
+# 14.04 has php5.5 and requires a ppa for 7.0
+# 16.04 has php7.0
+# 18.04 has php7.2
+
+{% set osrelease = salt['grains.get']('osrelease') %}
+{% set php_version = '7.0' %}
+{% if osrelease == "18.04" %}{% set php_version = '7.2' %}{% endif %}
+
 # backups going forwards
 journal-cms-backups:
     file.managed:
@@ -12,6 +20,28 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
+{% if osrelease not in ["14.04", "16.04"] %}
+
+# Ubuntu 18.04 (Bionic):
+#    Warnings: The following package(s) are "virtual package" names:
+#              php7.2-igbinary, php7.2-redis, php7.2-uploadprogress. These will
+#              no longer be supported as of the Fluorine release. Please update
+#              your SLS file(s) to use the actual package name.
+
+journal-cms-php-extensions:
+    pkg.installed:
+        - pkgs:
+            - php-redis 
+            - php-igbinary 
+            - php-uploadprogress
+            - php{{ php_version }}-sqlite3 # is the 'ci' conditional from below really necessary?
+        - require:
+            - php
+        - watch_in:
+            - service: php-fpm
+
+{% else %}
+
 journal-cms-php-extensions:
     cmd.run:
         - name: |
@@ -24,6 +54,7 @@ journal-cms-php-extensions:
         - watch_in:
             - service: php-fpm
     
+{% endif %}
 
 journal-cms-repository:
     builder.git_latest:
@@ -230,8 +261,8 @@ non-https-redirect:
 # when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
     file.managed:
-        - name: /etc/php/7.0/cli/conf.d/20-sendmail.ini
-        - source: salt://journal-cms/config/etc-php-7.0-cli-conf.d-20-sendmail.ini
+        - name: /etc/php/{{ php_version }}/cli/conf.d/20-sendmail.ini
+        - source: salt://journal-cms/config/etc-php-{{ php_version }}-cli-conf.d-20-sendmail.ini
         - require:
             - php
         - require_in:
