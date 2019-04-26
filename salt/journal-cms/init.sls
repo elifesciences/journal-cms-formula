@@ -1,3 +1,5 @@
+{% set osrelease = salt['grains.get']('osrelease') %}
+
 # backups going forwards
 journal-cms-backups:
     file.managed:
@@ -12,6 +14,8 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
+{% if osrelease == "14.04" %}
+
 journal-cms-php-extensions:
     cmd.run:
         - name: |
@@ -23,7 +27,22 @@ journal-cms-php-extensions:
             - php
         - watch_in:
             - service: php-fpm
-    
+
+{% else %}
+
+journal-cms-php-extensions:
+    pkg.installed:
+        - pkgs:
+            - php-redis 
+            - php-igbinary 
+            - php-uploadprogress 
+            - php7.2-sqlite3
+        - require:
+            - php
+        - listen_in:
+            - service: php-fpm
+
+{% endif %}
 
 journal-cms-repository:
     builder.git_latest:
@@ -223,7 +242,11 @@ non-https-redirect:
 # when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
     file.managed:
+        {% if osrelease == "14.04" %}
         - name: /etc/php/7.0/cli/conf.d/20-sendmail.ini
+        {% else %}
+        - name: /etc/php/7.2/cli/conf.d/20-sendmail.ini
+        {% endif %}
         - source: salt://journal-cms/config/etc-php-7.0-cli-conf.d-20-sendmail.ini
         - require:
             - php
