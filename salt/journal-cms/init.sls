@@ -14,7 +14,7 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
-{% if osrelease == "14.04" %}
+{% if osrelease in ["14.04", "16.04"] %}
 
 journal-cms-php-extensions:
     cmd.run:
@@ -242,7 +242,7 @@ non-https-redirect:
 # when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
     file.managed:
-        {% if osrelease == "14.04" %}
+        {% if osrelease in ["14.04", "16.04"] %}
         - name: /etc/php/7.0/cli/conf.d/20-sendmail.ini
         {% else %}
         - name: /etc/php/7.2/cli/conf.d/20-sendmail.ini
@@ -271,6 +271,7 @@ site-was-installed-check:
 site-install:
     cmd.run:
         - name: |
+            set -e
             ../vendor/bin/drush site-install config_installer -y
             ####test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
             #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
@@ -279,9 +280,10 @@ site-install:
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
             - journal-cms-repository
-        ## always perform a new site-install on dev and ci
+        # always perform a new site-install on dev and ci
         {% if pillar.elife.env not in ['dev', 'ci'] %}
-        - unless: sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
+        - unless:
+            - sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
         {% endif %}
 
 site-update-db:
