@@ -13,7 +13,7 @@ journal-cms-processes-task:
             processes: {{ processes }}
             timeout: 70
         - require:
-            {% for process, _number in processes.iteritems() %}
+            {% for process, _number in processes.items() %}
             - file: {{ process }}-init
             {% endfor %}
 
@@ -30,27 +30,16 @@ journal-cms-processes-start:
 {% set controller = "journal-cms-processes" %}
 
 {{ controller }}-script:
-    file.managed:
+    file.absent:
         - name: /opt/{{ controller }}.sh
-        - source: salt://elife/config/etc-init-multiple-processes-parallel.conf
-        - template: jinja
-        - context:
-            processes: {{ processes }}
-            timeout: 70
 
-{{ controller }}-service:
-    file.managed:
-        - name: /lib/systemd/system/{{ controller }}.service
-        - source: salt://journal-cms/config/lib-systemd-system-{{ controller }}.service
-
+{% for process, num_processes in processes.items() %}
+{{ process }}-service:
     service.running:
-        - name: {{ controller }}
+        - name: {{ process }}@{1..{{ num_processes }}}
+        - enable: true
         - require:
-            - file: {{ controller }}-service
-            - {{ controller }}-script
-            {% for process in processes %}
             - file: {{ process }}-init
-            {% endfor %}
-            
+{% endfor %}
 
 {% endif %}
