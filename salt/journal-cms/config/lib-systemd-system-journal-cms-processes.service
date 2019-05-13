@@ -1,0 +1,10 @@
+[Unit]
+Description="journal-cms-processes (many)"
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Restart=on-failure
+ExecStart=/opt/journal-cms-processes.sh

@@ -1,0 +1,15 @@
+[Unit]
+Description="journal-cms-send-notifications"
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=70
+User={{ pillar.elife.deploy_user.username }}
+Environment="HOME=/home/{{ pillar.elife.deploy_user.username }}"
+WorkingDirectory=/srv/journal-cms/web
+ExecStart=/srv/journal-cms/vendor/bin/drush sendn --sleep=10 $I

@@ -1,3 +1,5 @@
+{% set osrelease = salt['grains.get']('osrelease') %}
+
 # backups going forwards
 journal-cms-backups:
     file.managed:
@@ -12,6 +14,8 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
+{% if osrelease in ["14.04", "16.04"] %}
+
 journal-cms-php-extensions:
     cmd.run:
         - name: |
@@ -23,7 +27,22 @@ journal-cms-php-extensions:
             - php
         - watch_in:
             - service: php-fpm
-    
+
+{% else %}
+
+journal-cms-php-extensions:
+    pkg.installed:
+        - pkgs:
+            - php-redis 
+            - php-igbinary 
+            - php-uploadprogress 
+            - php7.2-sqlite3
+        - require:
+            - php
+        - listen_in:
+            - service: php-fpm
+
+{% endif %}
 
 journal-cms-repository:
     builder.git_latest:
@@ -147,11 +166,6 @@ journal-cms-{{ key }}:
         - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
         - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
         - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
-
-        {% else %}
-        # local mysql
-        - connection_pass: {{ pillar.elife.db_root.password }}
-
         {% endif %}
         - require:
             - mysql-ready
@@ -175,7 +189,6 @@ journal-cms-{{ key }}-user:
         {% else %}
         # local mysql
         - host: localhost
-        - connection_pass: {{ pillar.elife.db_root.password }}
         
         {% endif %}
         - require:
@@ -200,7 +213,6 @@ journal-cms-{{ key }}-access:
 
         {% else %}
         - host: localhost # default
-        - connection_pass: {{ pillar.elife.db_root.password }}
         
         {% endif %}
         - require:
@@ -230,7 +242,11 @@ non-https-redirect:
 # when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
     file.managed:
+        {% if osrelease in ["14.04", "16.04"] %}
         - name: /etc/php/7.0/cli/conf.d/20-sendmail.ini
+        {% else %}
+        - name: /etc/php/7.2/cli/conf.d/20-sendmail.ini
+        {% endif %}
         - source: salt://journal-cms/config/etc-php-7.0-cli-conf.d-20-sendmail.ini
         - require:
             - php
@@ -255,6 +271,7 @@ site-was-installed-check:
 site-install:
     cmd.run:
         - name: |
+            set -e
             ../vendor/bin/drush site-install config_installer -y
             ####test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
             #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
@@ -263,9 +280,10 @@ site-install:
         - user: {{ pillar.elife.deploy_user.username }}
         - require:
             - journal-cms-repository
-        ## always perform a new site-install on dev and ci
+        # always perform a new site-install on dev and ci
         {% if pillar.elife.env not in ['dev', 'ci'] %}
-        - unless: sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
+        - unless:
+            - sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
         {% endif %}
 
 site-update-db:
@@ -347,12 +365,16 @@ journal-cms-defaults-users-{{ username }}:
             - migrate-content
 {% endfor %}
 
-{% set processes = ['article-import', 'send-notifications'] %}
-{% for process in processes %}
-journal-cms-{{ process }}-service:
+{% for process in ['article-import', 'send-notifications'] %}
+journal-cms-{{ process }}-init:
     file.managed:
+        {% if salt['grains.get']('oscodename') == 'trusty' %}
         - name: /etc/init/journal-cms-{{ process }}.conf
         - source: salt://journal-cms/config/etc-init-journal-cms-{{ process }}.conf
+        {% else %}
+        - name: /lib/systemd/system/journal-cms-{{ process }}@.service
+        - source: salt://journal-cms/config/lib-systemd-system-journal-cms-{{ process }}@.service
+        {% endif %}
         - template: jinja
         - require:
             - migrate-content
