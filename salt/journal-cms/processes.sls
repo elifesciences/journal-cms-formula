@@ -1,6 +1,8 @@
 {% set processes = {'journal-cms-article-import': 1, 'journal-cms-send-notifications': 1} %}
 
-{% if salt['grains.get']('osrelease') in ['14.04', '16.04'] %}
+{% if salt['grains.get']('osrelease') == '14.04' %}
+
+# upstart, 12.04, 14.04
 
 journal-cms-processes-task:
     file.managed:
@@ -22,6 +24,8 @@ journal-cms-processes-start:
             - journal-cms-processes-task
 
 {% else %}
+
+# systemd, 16.04, 18.04
 
 {% set controller = "journal-cms-processes" %}
 
