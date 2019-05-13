@@ -1,6 +1,6 @@
 {% set processes = {'journal-cms-article-import': 1, 'journal-cms-send-notifications': 1} %}
 
-{% if salt['grains.get']('oscodename') == 'trusty' %}
+{% if salt['grains.get']('osrelease') in ['14.04', '16.04'] %}
 
 journal-cms-processes-task:
     file.managed:
@@ -20,10 +20,8 @@ journal-cms-processes-start:
         - name: start journal-cms-processes
         - require:
             - journal-cms-processes-task
-            
+
 {% else %}
-
-
 
 {% set controller = "journal-cms-processes" %}
 
@@ -51,7 +49,4 @@ journal-cms-processes-start:
             {% endfor %}
             
 
-
 {% endif %}
-
-

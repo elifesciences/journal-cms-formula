@@ -1,6 +1,3 @@
-#
-# cron jobs
-#
 journal-cms-cron-cache-rebuild:
     cron.absent:
         - identifier: journal-cms-cron-cache-rebuild
