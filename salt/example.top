@@ -20,4 +20,4 @@ base:
         - elife.swapspace
         # not used in dev:
         #- journal-cms.cron
-        #- journal-cms.processes
+        - journal-cms.processes
