@@ -1,6 +1,7 @@
 [Unit]
 Description="{{ process }}"
 After=network.target
+PartOf={{ process }}-controller.target
 
 [Install]
 WantedBy={{ process }}-controller.target
