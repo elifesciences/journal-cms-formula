@@ -13,7 +13,6 @@ base:
         - elife.docker
         - elife.goaws
         - elife.aws-cli
-        - elife.multiservice
         - journal-cms
         - api-dummy
         - journal-cms.api-dummy
@@ -21,4 +20,5 @@ base:
         - elife.swapspace
         # not used in dev:
         #- journal-cms.cron
+        #- elife.multiservice
         #- journal-cms.processes
