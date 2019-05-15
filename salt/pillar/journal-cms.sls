@@ -54,3 +54,13 @@ journal_cms:
 api_dummy:
     standalone: False
     pinned_revision_file: /srv/journal-cms/api-dummy.sha1
+
+elife:
+    multiservice:
+        services:
+            journal-cms-article-import:
+                service_template: journal-cms-article-import-template
+                num_processes: 1
+            journal-cms-send-notifications:
+                service_template: journal-cms-send-notifications-template
+                num_processes: 1

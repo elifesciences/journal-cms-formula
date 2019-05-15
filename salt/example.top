@@ -13,6 +13,7 @@ base:
         - elife.docker
         - elife.goaws
         - elife.aws-cli
+        - elife.multiservice
         - journal-cms
         - api-dummy
         - journal-cms.api-dummy

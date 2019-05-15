@@ -36,51 +36,23 @@ journal-cms-processes-start:
 
 # systemd, 16.04, 18.04
 
-# old, remove 
+# todo: deprecated.
 {% set controller = "journal-cms-processes" %}
 {{ controller }}-script:
     file.absent:
         - name: /opt/{{ controller }}.sh
 
-
-
-# new
 {% for process, num_processes in processes.items() %}
-
-# https://www.freedesktop.org/software/systemd/man/systemd.target.html
-{{ process }}-controller.target:
-    # the process controller simply provides a target state that processes can depend on
-    # the controller itself is started after reaching the 'multi-user.target'
-    file.managed:
-        - name: /lib/systemd/system/{{ process }}-controller.target
-        - source: salt://journal-cms/templates/process-controller.target
-
-    # ensure the controller is running and should be running on boot
-    # stopping+starting this *target* will stop+start the services that depend on it
-    service.running:
-        - enable: true
-        - require:
-            - file: {{ process }}-controller.target
-
-# tell systemd we want N number of these template ('instantiated') services enabled and ready to run on boot
-# these services will stop/start/restart themselves when the controller they depend on is stopped/started/restarted
-enable-n-{{ process }}-services:
+{{ process }}-template:
     file.managed:
         - name: /lib/systemd/system/{{ process }}@.service
         - source: salt://journal-cms/config/lib-systemd-system-{{ process }}@.service
         - template: jinja
         - context:
             process: {{ process }}
-        
-    service.running:
-        - name: {{ process }}@{1..{{ num_processes }}} # "journal-cms-article-import@{1..1}"
-        - init_delay: 5 # seconds. occasionally there is a long pause before failure, sometimes a very short pause
         - require:
-            - file: enable-n-{{ process }}-services
-            - {{ process }}-controller.target
             - migrate-content
             - aws-credentials-cli
-
 {% endfor %}
 
 {% endif %}
