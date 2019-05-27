@@ -1,9 +1,10 @@
 [Unit]
-Description="journal-cms-send-notifications"
+Description="{{ process }}"
 After=network.target
+PartOf={{ process }}-controller.target
 
 [Install]
-WantedBy=multi-user.target
+WantedBy={{ process }}-controller.target
 
 [Service]
 Restart=on-failure

@@ -365,22 +365,6 @@ journal-cms-defaults-users-{{ username }}:
             - migrate-content
 {% endfor %}
 
-{% for process in ['article-import', 'send-notifications'] %}
-journal-cms-{{ process }}-init:
-    file.managed:
-        {% if salt['grains.get']('oscodename') == 'trusty' %}
-        - name: /etc/init/journal-cms-{{ process }}.conf
-        - source: salt://journal-cms/config/etc-init-journal-cms-{{ process }}.conf
-        {% else %}
-        - name: /lib/systemd/system/journal-cms-{{ process }}@.service
-        - source: salt://journal-cms/config/lib-systemd-system-journal-cms-{{ process }}@.service
-        {% endif %}
-        - template: jinja
-        - require:
-            - migrate-content
-            - aws-credentials-cli
-{% endfor %}
-
 journal-cms-warmup-on-boot:
     file.managed:
         - name: /etc/init/journal-cms-warmup.conf

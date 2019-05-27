@@ -4,6 +4,19 @@
 
 # upstart, 12.04, 14.04
 
+{% for process, _ in processes %}
+{{ process }}-init:
+    file.managed:
+        - name: /etc/init/{{ process }}.conf
+        - source: salt://journal-cms/config/etc-init-{{ process }}.conf
+        - template: jinja
+        - require:
+            - migrate-content
+            - aws-credentials-cli
+        - require_in:
+            - file: journal-cms-processes-task
+{% endfor %}
+
 journal-cms-processes-task:
     file.managed:
         - name: /etc/init/journal-cms-processes.conf
@@ -12,10 +25,6 @@ journal-cms-processes-task:
         - context:
             processes: {{ processes }}
             timeout: 70
-        - require:
-            {% for process, _number in processes.iteritems() %}
-            - file: {{ process }}-init
-            {% endfor %}
 
 journal-cms-processes-start:
     cmd.run:
@@ -27,30 +36,23 @@ journal-cms-processes-start:
 
 # systemd, 16.04, 18.04
 
+# todo: deprecated.
 {% set controller = "journal-cms-processes" %}
-
 {{ controller }}-script:
-    file.managed:
+    file.absent:
         - name: /opt/{{ controller }}.sh
-        - source: salt://elife/config/etc-init-multiple-processes-parallel.conf
+
+{% for process, num_processes in processes.items() %}
+{{ process }}-template:
+    file.managed:
+        - name: /lib/systemd/system/{{ process }}@.service
+        - source: salt://journal-cms/config/lib-systemd-system-{{ process }}@.service
         - template: jinja
         - context:
-            processes: {{ processes }}
-            timeout: 70
-
-{{ controller }}-service:
-    file.managed:
-        - name: /lib/systemd/system/{{ controller }}.service
-        - source: salt://journal-cms/config/lib-systemd-system-{{ controller }}.service
-
-    service.running:
-        - name: {{ controller }}
+            process: {{ process }}
         - require:
-            - file: {{ controller }}-service
-            - {{ controller }}-script
-            {% for process in processes %}
-            - file: {{ process }}-init
-            {% endfor %}
-            
+            - migrate-content
+            - aws-credentials-cli
+{% endfor %}
 
 {% endif %}
