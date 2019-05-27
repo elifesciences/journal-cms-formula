@@ -4,7 +4,7 @@
 
 # upstart, 12.04, 14.04
 
-{% for process, _ in processes %}
+{% for process in processes %}
 {{ process }}-init:
     file.managed:
         - name: /etc/init/{{ process }}.conf
