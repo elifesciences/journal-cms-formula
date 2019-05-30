@@ -7,7 +7,7 @@ PartOf={{ process }}-controller.target
 WantedBy={{ process }}-controller.target
 
 [Service]
-Restart=on-failure
+Restart=always
 RestartSec=10
 TimeoutStopSec=70
 User={{ pillar.elife.deploy_user.username }}
