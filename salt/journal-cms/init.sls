@@ -289,7 +289,9 @@ site-install:
 
 site-update-db:
     cmd.run:
-        - name: ../vendor/bin/drush updatedb -y
+        - name: |
+            ../vendor/bin/drush updatedb -y
+            ../vendor/bin/drush cr
         - cwd: /srv/journal-cms/web
         - user: {{ pillar.elife.deploy_user.username }}
         - require: 
