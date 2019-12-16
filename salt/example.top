@@ -7,7 +7,8 @@ base:
         - elife.composer
         - elife.nginx
         - elife.nginx-php7
-        - elife.mysql57
+        - elife.mysql-client
+        - elife.mysql-server
         - elife.redis-server
         # these 2 used for testing AWS interactions locally
         - elife.docker
