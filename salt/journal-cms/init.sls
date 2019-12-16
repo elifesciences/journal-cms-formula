@@ -352,7 +352,7 @@ migrate-content:
         - require:
             - site-permissions-rebuild
 
-{% for username, user in pillar.journal_cms.users.iteritems() %}
+{% for username, user in pillar.journal_cms.users.items() %}
 journal-cms-defaults-users-{{ username }}:
     cmd.run:
         - name: |
