@@ -1,1 +1,1 @@
-elifeFormula('journal-cms', '/srv/journal-cms', null, ['sNextSalt'])
+elifeFormula('journal-cms', '/srv/journal-cms', null, ['s1804', 'sNextSalt'])
