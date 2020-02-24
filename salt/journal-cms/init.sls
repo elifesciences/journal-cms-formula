@@ -83,7 +83,7 @@ composer-install:
         - name: composer --no-interaction install 
         {% endif %}
         - cwd: /srv/journal-cms
-        - user: {{ pillar.elife.deploy_user.username }}
+        - runas: {{ pillar.elife.deploy_user.username }}
         - env:
             - COMPOSER_DISCARD_CHANGES: "1"
         - require:
@@ -278,7 +278,7 @@ site-install:
             #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
             redis-cli flushall
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
+        - runas: {{ pillar.elife.deploy_user.username }}
         - require:
             - journal-cms-repository
         # always perform a new site-install on dev and ci
@@ -291,7 +291,7 @@ site-update-db:
     cmd.run:
         - name: ../vendor/bin/drush updatedb -y
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
+        - runas: {{ pillar.elife.deploy_user.username }}
         - require: 
             - site-install
 
@@ -299,7 +299,7 @@ site-configuration-import:
     cmd.run:
         - name: ../vendor/bin/drush config-import -y
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
+        - runas: {{ pillar.elife.deploy_user.username }}
         - require: 
             - site-update-db
 
@@ -307,7 +307,7 @@ site-cache-rebuild-again:
     cmd.run:
         - name: ../vendor/bin/drush cr
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
+        - runas: {{ pillar.elife.deploy_user.username }}
         - require:
             - site-configuration-import
 
@@ -315,7 +315,7 @@ site-permissions-rebuild:
     cmd.run: 
         - name: ../vendor/bin/drush php-eval "node_access_rebuild();"
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
+        - runas: {{ pillar.elife.deploy_user.username }}
         - onlyif: cd /srv/journal-cms/web && [[ $(sudo -u {{ pillar.elife.deploy_user.username }} ../vendor/bin/drush php-eval "print node_access_needs_rebuild()") == "1" ]]
         - require:
             - site-cache-rebuild-again
@@ -348,7 +348,7 @@ migrate-content:
             ../vendor/bin/drush mi jcms_subjects_json 2>&1 | tee --append /tmp/drush-migrate.log
             cat /tmp/drush-migrate.log | ../check-drush-migrate-output.sh
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.webserver.username }}
+        - runas: {{ pillar.elife.webserver.username }}
         - require:
             - site-permissions-rebuild
 
@@ -359,7 +359,7 @@ journal-cms-defaults-users-{{ username }}:
             ../vendor/bin/drush user-create {{ username }} --mail="{{ user.email }}" --password="{{ user.password }}"
             ../vendor/bin/drush user-add-role "{{ user.role }}" --name={{ username }}
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
+        - runas: {{ pillar.elife.deploy_user.username }}
         - unless:
             - sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush user-information {{ username }}
         - require:
@@ -402,7 +402,7 @@ populate-people-api-with-fixtures:
             ../vendor/bin/drush create-person reviewing-editor "Calvin" --given="Susan" --email="susan.calvin@usrobots.com" --upsert
         # as late as possible
         - cwd: /srv/journal-cms/web
-        - user: {{ pillar.elife.deploy_user.username }}
+        - runas: {{ pillar.elife.deploy_user.username }}
         - require:
             - cmd: migrate-content
 {% endif %}
