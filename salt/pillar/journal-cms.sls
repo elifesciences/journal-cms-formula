@@ -26,13 +26,14 @@ journal_cms:
         base_uri: null
         mount: null
 
+    {% set dummy_url = 'http://localhost:8080' %}
     api:
         gateway: null
-        articles_endpoint_for_migration: null
-        articles_endpoint: null
-        metrics_endpoint: null
-        all_articles_endpoint: null
-        all_digests_endpoint: null
+        articles_endpoint_for_migration: {{ dummy_url }}/articles/%s/versions
+        articles_endpoint: {{ dummy_url }}/articles/%s/versions
+        metrics_endpoint: {{ dummy_url }}/metrics/article/%s/%s
+        all_articles_endpoint: {{ dummy_url }}/articles
+        all_digests_endpoint: {{ dummy_url }}/digests
         article_fragment_images_endpoint: null
         auth_unpublished: null
 
