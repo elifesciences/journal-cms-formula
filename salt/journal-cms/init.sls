@@ -248,7 +248,7 @@ php-cli-ini-with-fake-sendmail:
         {% else %}
         - name: /etc/php/7.2/cli/conf.d/20-sendmail.ini
         {% endif %}
-        - source: salt://journal-cms/config/etc-php-7.0-cli-conf.d-20-sendmail.ini
+        - source: salt://journal-cms/config/etc-php-7.2-cli-conf.d-20-sendmail.ini
         - require:
             - php
         - require_in:
@@ -366,6 +366,7 @@ journal-cms-defaults-users-{{ username }}:
             - migrate-content
 {% endfor %}
 
+# todo: upgrade or remove
 journal-cms-warmup-on-boot:
     file.managed:
         - name: /etc/init/journal-cms-warmup.conf
