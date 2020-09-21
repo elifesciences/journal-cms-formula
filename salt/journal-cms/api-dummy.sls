@@ -4,7 +4,7 @@ api-dummy-nginx-vhost-dev:
         - source: salt://journal-cms/config/etc-nginx-sites-enabled-api-dummy-dev.conf
         - require:
             - api-dummy-composer-install
-        - listen_in:
+        - watch_in:
             - service: nginx-server-service
             - service: php-fpm
 
