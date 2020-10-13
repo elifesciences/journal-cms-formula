@@ -35,7 +35,6 @@ journal_cms:
         all_articles_endpoint: {{ dummy_url }}/articles
         all_digests_endpoint: {{ dummy_url }}/digests
         article_fragments_endpoint: null
-        article_fragment_images_endpoint: null
         auth_unpublished: null
 
     users:
