@@ -91,6 +91,17 @@ composer-install:
             - install-composer
             - journal-cms-localhost
 
+# these files accumulate over time and are not required in non-prod environments
+{% if pillar.elife.env not in ['prod'] %}
+prune-accumulating-files:
+    cmd.run:
+        - name: rm -rf /srv/journal-cms/web/sites/default/files
+        - require:
+            - journal-cms-repository
+        - require_in:
+            - cmd: web-sites-file-permissions
+{% endif %}
+
 web-sites-file-permissions:
     cmd.run:
         - name: |
