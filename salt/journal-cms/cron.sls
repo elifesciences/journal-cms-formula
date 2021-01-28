@@ -18,7 +18,7 @@ journal-cms-cron-drupal:
 journal-cms-cron-purge-revisions:
     cron.present:
         - identifier: journal-cms-cron-purge-revisions:
-        - name: cd /srv/journal-cms/web && ../vendor/bin/drush paragraphs-revisions-purge && ../vendor/bin/drush paragraphs-revisions-optimise --feedback=1000
+        - name: cd /srv/journal-cms/web && ../vendor/bin/drush paragraphs-revisions-purge --feedback=1000 && ../vendor/bin/drush paragraphs-revisions-optimise
         - user: {{ pillar.elife.deploy_user.username }}
         - hour: 3
         - minute: 0
