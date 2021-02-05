@@ -15,8 +15,6 @@ base:
         - elife.goaws
         - elife.aws-cli
         - journal-cms
-        - api-dummy
-        - journal-cms.api-dummy
         # for CI or wherever composer update is needed
         - elife.swapspace
         # not used in dev:
