@@ -65,10 +65,6 @@ journal-cms-repository:
         - cwd: /srv/journal-cms
         - require:
             - builder: journal-cms-repository
-        {% if pillar.elife.env in ['dev', 'ci'] %}
-        - require_in:
-            - cmd: api-dummy-repository
-        {% endif %}
 
 # not minimal, but better to be too wide than having strange problems to debug
 # TODO: should be moved later in the process? (e.g. after site install)
@@ -90,6 +86,17 @@ composer-install:
             - journal-cms-repository
             - install-composer
             - journal-cms-localhost
+
+# these files accumulate over time and are not required in non-prod environments.
+{% if pillar.elife.env in ['dev', 'ci', 'end2end'] %}
+prune-accumulating-files:
+    cmd.run:
+        - name: rm -rf /srv/journal-cms/web/sites/default/files
+        - require:
+            - journal-cms-repository
+        - require_in:
+            - cmd: web-sites-file-permissions
+{% endif %}
 
 web-sites-file-permissions:
     cmd.run:
