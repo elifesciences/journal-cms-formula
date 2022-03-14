@@ -1,6 +1,7 @@
 {% set osrelease = salt['grains.get']('osrelease') %}
 
-# backups going forwards
+{% set phpver = "7.2" if osrelease == "18.04" else "7.4" %}
+
 journal-cms-backups:
     file.managed:
         - name: /etc/ubr/journal-cms-backup.yaml
@@ -14,36 +15,17 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
-{% if osrelease in ["14.04", "16.04"] %}
-
-journal-cms-php-extensions:
-    cmd.run:
-        - name: |
-            set -e
-            apt-get -y --no-install-recommends install php7.0-redis php7.0-igbinary php7.0-uploadprogress 
-            {% if pillar.elife.env in ['ci'] %}
-            apt-get -y install php7.0-sqlite3
-            {% endif %}
-        - require:
-            - php
-        - watch_in:
-            - service: php-fpm
-
-{% else %}
-
 journal-cms-php-extensions:
     pkg.installed:
         - pkgs:
             - php-redis 
             - php-igbinary 
             - php-uploadprogress 
-            - php7.2-sqlite3
+            - php{{ phpver }}-sqlite3
         - require:
             - php
         - listen_in:
             - service: php-fpm
-
-{% endif %}
 
 journal-cms-repository:
     builder.git_latest:
@@ -254,12 +236,8 @@ non-https-redirect:
 # when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
     file.managed:
-        {% if osrelease in ["14.04", "16.04"] %}
-        - name: /etc/php/7.0/cli/conf.d/20-sendmail.ini
-        {% else %}
-        - name: /etc/php/7.2/cli/conf.d/20-sendmail.ini
-        {% endif %}
-        - source: salt://journal-cms/config/etc-php-7.2-cli-conf.d-20-sendmail.ini
+        - name: /etc/php/{{ phpver }}/cli/conf.d/20-sendmail.ini
+        - source: salt://journal-cms/config/etc-php-{{ phpver }}-cli-conf.d-20-sendmail.ini
         - require:
             - php
         - require_in:
