@@ -166,6 +166,8 @@ journal-cms-{{ key }}:
         - require_in:
             - cmd: site-was-installed-check
 
+{% if osrelease == "18.04" %}
+
 journal-cms-{{ key }}-user:
     mysql_user.present:
         - name: {{ db.user }}
@@ -214,6 +216,34 @@ journal-cms-{{ key }}-access:
             - mysql_database: journal-cms-{{ key }}
         - require_in:
             - cmd: site-was-installed-check
+
+{% else %}
+
+# work around for mysql user grants issues with mysql8+ in 20.04.
+
+{% set host = "localhost" if not salt['elife.cfg']('cfn.outputs.RDSHost') else salt['elife.cfg']('project.netmask') %}
+
+journal-cms-{{ key }}-access:
+    cmd.script:
+        - name: salt://elife/scripts/mysql-auth.sh
+        - template: jinja
+        - defaults:
+            user: "{{ db.user }}"
+            pass: "{{ db.password }}"
+            host: "{{ host }}"
+            db: "{{ db.name }}.*"
+            grants: "ALL PRIVILEGES"
+        {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
+            connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
+            connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
+            connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
+            connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
+        {% endif %}
+        - require:
+            - mysql-server
+
+{% endif %}
+
 {% endfor %}
 
 journal-cms-vhost:
