@@ -11,7 +11,7 @@ base:
         - elife.mysql-server
         - elife.redis-server
         # these 2 used for testing AWS interactions locally
-        - elife.docker
+        - elife.docker-native
         - elife.goaws
         - elife.aws-cli
         - journal-cms
