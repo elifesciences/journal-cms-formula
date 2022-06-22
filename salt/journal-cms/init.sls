@@ -17,10 +17,12 @@ journal-cms-localhost:
 
 journal-cms-php-extensions:
     pkg.installed:
+        - skip_suggestions: true
+        - install_recommends: false
         - pkgs:
             - php-redis 
-            - php-igbinary 
-            - php-uploadprogress 
+            - php-igbinary
+            - php-uploadprogress # transitive optional dependency on apache2
             - php{{ phpver }}-sqlite3
         - require:
             - php
