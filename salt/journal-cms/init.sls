@@ -20,12 +20,18 @@ journal-cms-php-extensions:
         - skip_suggestions: true
         - install_recommends: false
         - pkgs:
-            - php-redis 
-            - php-igbinary
-            - php-uploadprogress # transitive optional dependency on apache2
+            - php-redis # transitive dependency on apache2 via phpapi-20190902 -> libapache2-mod-php7.4 -> apache2
+            - php-igbinary # transitive dependency on apache2 via phpapi-20190902 -> libapache2-mod-php7.4 -> apache2
+            # transitive dependency on apache2 via phpapi-20190902 -> libapache2-mod-php7.4 -> apache2
+            # *optional* transitive dependency on apache2 via libapache2-mod-php -> libapache2-mod-php7.4 -> apache2
+            - php-uploadprogress
             - php{{ phpver }}-sqlite3
         - require:
             - php
+            # lsh@2022-11-04: added as we have another instance of apache2 being installed.
+            # - https://github.com/elifesciences/issues/issues/7871
+            - nginx-server
+            - php-nginx-deps
         - listen_in:
             - service: php-fpm
 
