@@ -26,6 +26,9 @@ journal-cms-php-extensions:
             - php{{ phpver }}-sqlite3
         - require:
             - php
+            # lsh@2022-11-04: added as we have another instance of apache2 being installed.
+            # - https://github.com/elifesciences/issues/issues/7871
+            - nginx-server
         - listen_in:
             - service: php-fpm
 
