@@ -300,7 +300,7 @@ site-install:
     cmd.run:
         - name: |
             set -e
-            ../vendor/bin/drush site-install config_installer -y
+            ../vendor/bin/drush site-install minimal --existing-config -y
             ####test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
             #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
             redis-cli flushall
