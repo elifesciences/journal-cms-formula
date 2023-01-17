@@ -300,7 +300,7 @@ site-install:
     cmd.run:
         - name: |
             set -e
-            ../vendor/bin/drush site-install config_installer -y
+            ../vendor/bin/drush site-install minimal --existing-config -y
             ####test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
             #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
             redis-cli flushall
@@ -372,7 +372,7 @@ migrate-content:
     cmd.run:
         - name: |
             rm -f /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_subjects_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush migrate:import jcms_subjects_json 2>&1 | tee --append /tmp/drush-migrate.log
             cat /tmp/drush-migrate.log | ../check-drush-migrate-output.sh
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.webserver.username }}
@@ -384,7 +384,7 @@ journal-cms-defaults-users-{{ username }}:
     cmd.run:
         - name: |
             ../vendor/bin/drush user-create {{ username }} --mail="{{ user.email }}" --password="{{ user.password }}"
-            ../vendor/bin/drush user-add-role "{{ user.role }}" --name={{ username }}
+            ../vendor/bin/drush user-add-role "{{ user.role }}" "{{ username }}"
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
         - unless:
