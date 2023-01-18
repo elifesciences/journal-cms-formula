@@ -53,6 +53,9 @@ journal_cms:
         db: journal-cms/201705/20170522_prod--journal-cms.elifesciences.org_230506-elife_2_0-mysql.gz
 
 elife:
+    composer:
+        version: 2.3.5
+
     multiservice:
         services:
             journal-cms-article-import:
