@@ -34,6 +34,7 @@ journal_cms:
         metrics_endpoint: {{ dummy_url }}/metrics/article/%s/%s
         all_articles_endpoint: {{ dummy_url }}/articles
         all_digests_endpoint: {{ dummy_url }}/digests
+        all_reviewed_preprints_endpoint: {{ dummy_url }}/reviewed-preprints
         article_fragments_endpoint: null
         auth_unpublished: null
 
