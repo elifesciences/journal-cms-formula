@@ -3,10 +3,10 @@ base:
         - elife
         - elife.external-volume
         - elife.external-volume-srv
-        - elife.php7
+        - elife.php8-ppa
         - elife.composer
         - elife.nginx
-        - elife.nginx-php7
+        - elife.nginx-php8-ppa
         - elife.mysql-client
         - elife.mysql-server
         - elife.redis-server
