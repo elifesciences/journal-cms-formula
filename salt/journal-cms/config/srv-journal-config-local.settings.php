@@ -49,7 +49,7 @@ if (class_exists(\Composer\Autoload\ClassLoader::class)) {
   ];
 }
 
-if (!drupal_installation_attempted()) {
+if (!\Drupal\Core\Installer\InstallerKernel::installationAttempted()) {
   $settings['cache']['default'] = 'cache.backend.redis';
   $settings['redis.connection']['interface'] = 'PhpRedis';
   $settings['redis.connection']['host'] = '127.0.0.1';
@@ -93,6 +93,7 @@ $settings['jcms_articles_endpoint'] = '{{ pillar.journal_cms.api.articles_endpoi
 $settings['jcms_metrics_endpoint'] = '{{ pillar.journal_cms.api.metrics_endpoint }}';
 $settings['jcms_all_digests_endpoint'] = '{{ pillar.journal_cms.api.all_digests_endpoint }}';
 $settings['jcms_all_articles_endpoint'] = '{{ pillar.journal_cms.api.all_articles_endpoint }}';
+$settings['jcms_all_reviewed_preprints_endpoint'] = '{{ pillar.journal_cms.api.all_reviewed_preprints_endpoint }}';
 $settings['jcms_article_fragments_endpoint'] = '{{ pillar.journal_cms.api.article_fragments_endpoint }}';
 {% if pillar.journal_cms.api.auth_unpublished %}
 $settings['jcms_article_auth_unpublished'] = '{{ pillar.journal_cms.api.auth_unpublished }}';

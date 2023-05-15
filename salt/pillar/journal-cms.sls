@@ -34,6 +34,7 @@ journal_cms:
         metrics_endpoint: {{ dummy_url }}/metrics/article/%s/%s
         all_articles_endpoint: {{ dummy_url }}/articles
         all_digests_endpoint: {{ dummy_url }}/digests
+        all_reviewed_preprints_endpoint: {{ dummy_url }}/reviewed-preprints
         article_fragments_endpoint: null
         auth_unpublished: null
 
@@ -53,6 +54,9 @@ journal_cms:
         db: journal-cms/201705/20170522_prod--journal-cms.elifesciences.org_230506-elife_2_0-mysql.gz
 
 elife:
+    composer:
+        version: 2.3.5
+
     multiservice:
         services:
             journal-cms-article-import:

@@ -1,6 +1,7 @@
 {% set osrelease = salt['grains.get']('osrelease') %}
 
-# backups going forwards
+{% set phpver = "7.2" if osrelease == "18.04" else "7.4" %}
+
 journal-cms-backups:
     file.managed:
         - name: /etc/ubr/journal-cms-backup.yaml
@@ -14,36 +15,25 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
-{% if osrelease in ["14.04", "16.04"] %}
-
-journal-cms-php-extensions:
-    cmd.run:
-        - name: |
-            set -e
-            apt-get -y --no-install-recommends install php7.0-redis php7.0-igbinary php7.0-uploadprogress 
-            {% if pillar.elife.env in ['ci'] %}
-            apt-get -y install php7.0-sqlite3
-            {% endif %}
-        - require:
-            - php
-        - watch_in:
-            - service: php-fpm
-
-{% else %}
-
 journal-cms-php-extensions:
     pkg.installed:
+        - skip_suggestions: true
+        - install_recommends: false
         - pkgs:
-            - php-redis 
-            - php-igbinary 
-            - php-uploadprogress 
-            - php7.2-sqlite3
+            - php-redis # transitive dependency on apache2 via phpapi-20190902 -> libapache2-mod-php7.4 -> apache2
+            - php-igbinary # transitive dependency on apache2 via phpapi-20190902 -> libapache2-mod-php7.4 -> apache2
+            # transitive dependency on apache2 via phpapi-20190902 -> libapache2-mod-php7.4 -> apache2
+            # *optional* transitive dependency on apache2 via libapache2-mod-php -> libapache2-mod-php7.4 -> apache2
+            - php-uploadprogress
+            - php{{ phpver }}-sqlite3
         - require:
             - php
+            # lsh@2022-11-04: added as we have another instance of apache2 being installed.
+            # - https://github.com/elifesciences/issues/issues/7871
+            - nginx-server
+            - php-nginx-deps
         - listen_in:
             - service: php-fpm
-
-{% endif %}
 
 journal-cms-repository:
     builder.git_latest:
@@ -87,6 +77,8 @@ composer-install:
             - install-composer
             - journal-cms-localhost
 
+{# lsh@2021-07-30: disabled to test behaviour of 404 errors in end2end tests
+
 # these files accumulate over time and are not required in non-prod environments.
 {% if pillar.elife.env in ['dev', 'ci', 'end2end'] %}
 prune-accumulating-files:
@@ -97,6 +89,8 @@ prune-accumulating-files:
         - require_in:
             - cmd: web-sites-file-permissions
 {% endif %}
+
+#}
 
 web-sites-file-permissions:
     cmd.run:
@@ -180,6 +174,8 @@ journal-cms-{{ key }}:
         - require_in:
             - cmd: site-was-installed-check
 
+{% if osrelease == "18.04" %}
+
 journal-cms-{{ key }}-user:
     mysql_user.present:
         - name: {{ db.user }}
@@ -228,6 +224,34 @@ journal-cms-{{ key }}-access:
             - mysql_database: journal-cms-{{ key }}
         - require_in:
             - cmd: site-was-installed-check
+
+{% else %}
+
+# work around for mysql user grants issues with mysql8+ in 20.04.
+
+{% set host = "localhost" if not salt['elife.cfg']('cfn.outputs.RDSHost') else salt['elife.cfg']('project.netmask') %}
+
+journal-cms-{{ key }}-access:
+    cmd.script:
+        - name: salt://elife/scripts/mysql-auth.sh
+        - template: jinja
+        - defaults:
+            user: "{{ db.user }}"
+            pass: "{{ db.password }}"
+            host: "{{ host }}"
+            db: "{{ db.name }}.*"
+            grants: "ALL PRIVILEGES"
+        {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
+            connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
+            connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
+            connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
+            connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
+        {% endif %}
+        - require:
+            - mysql-server
+
+{% endif %}
+
 {% endfor %}
 
 journal-cms-vhost:
@@ -250,12 +274,8 @@ non-https-redirect:
 # when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
     file.managed:
-        {% if osrelease in ["14.04", "16.04"] %}
-        - name: /etc/php/7.0/cli/conf.d/20-sendmail.ini
-        {% else %}
-        - name: /etc/php/7.2/cli/conf.d/20-sendmail.ini
-        {% endif %}
-        - source: salt://journal-cms/config/etc-php-7.2-cli-conf.d-20-sendmail.ini
+        - name: /etc/php/{{ phpver }}/cli/conf.d/20-sendmail.ini
+        - source: salt://journal-cms/config/etc-php-{{ phpver }}-cli-conf.d-20-sendmail.ini
         - require:
             - php
         - require_in:
@@ -280,7 +300,7 @@ site-install:
     cmd.run:
         - name: |
             set -e
-            ../vendor/bin/drush site-install config_installer -y
+            ../vendor/bin/drush site-install minimal --existing-config -y
             ####test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
             #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
             redis-cli flushall
@@ -352,7 +372,7 @@ migrate-content:
     cmd.run:
         - name: |
             rm -f /tmp/drush-migrate.log
-            ../vendor/bin/drush mi jcms_subjects_json 2>&1 | tee --append /tmp/drush-migrate.log
+            ../vendor/bin/drush migrate:import jcms_subjects_json 2>&1 | tee --append /tmp/drush-migrate.log
             cat /tmp/drush-migrate.log | ../check-drush-migrate-output.sh
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.webserver.username }}
@@ -364,7 +384,7 @@ journal-cms-defaults-users-{{ username }}:
     cmd.run:
         - name: |
             ../vendor/bin/drush user-create {{ username }} --mail="{{ user.email }}" --password="{{ user.password }}"
-            ../vendor/bin/drush user-add-role "{{ user.role }}" --name={{ username }}
+            ../vendor/bin/drush user-add-role "{{ user.role }}" "{{ username }}"
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
         - unless:
