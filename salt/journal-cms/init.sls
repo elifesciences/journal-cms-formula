@@ -131,7 +131,7 @@ site-settings:
         - require:
             - web-sites-file-permissions
         - require_in:
-            - cmd: site-was-installed-check
+            - file: site-was-installed-check
 
 site-services:
     file.managed:
@@ -144,7 +144,7 @@ site-services:
         - require:
             - web-sites-file-permissions
         - require_in:
-            - cmd: site-was-installed-check
+            - file: site-was-installed-check
 
 {% for key in ['db'] %}
 {% set db = pillar.journal_cms[key] %}
@@ -172,7 +172,7 @@ journal-cms-{{ key }}:
         - require:
             - mysql-ready
         - require_in:
-            - cmd: site-was-installed-check
+            - file: site-was-installed-check
 
 # work around for mysql user grants issues with mysql8+ in 20.04.
 
@@ -205,7 +205,7 @@ journal-cms-vhost:
         - source: salt://journal-cms/config/etc-nginx-sites-enabled-journal-cms.conf
         - template: jinja
         - require_in:
-            - cmd: site-was-installed-check
+            - file: site-was-installed-check
         - listen_in:
             - service: nginx-server-service
             - service: php-fpm
@@ -223,7 +223,7 @@ php-cli-ini-with-fake-sendmail:
         - require:
             - php
         - require_in:
-            - cmd: site-was-installed-check
+            - file: site-was-installed-check
 
 site-was-installed-check-flag-remove:
     cmd.run:
