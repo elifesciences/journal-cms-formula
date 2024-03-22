@@ -1,0 +1,98 @@
+(config) {
+
+    log {
+        output file /var/log/caddy/access.log
+        format json {
+            time_format rfc3339
+        }
+    }
+
+    root * /srv/journal-cms/web
+
+    request_body [<matcher>] {
+        max_size 32MB
+    }
+
+    handle /favicon.ico {
+        skip_log
+        file_server
+    }
+
+    @direct-php-requests {
+        path *.php
+    }
+    handle @direct-php-requests {
+        error 403
+    }
+
+    @path-traversal {
+        path_regexp (^|\/)\.
+    }
+    handle @path-traversal {
+        error 403
+    }
+
+    handle /ping-nginx {
+        skip_log
+        respond 200 "pong"
+    }
+
+    @media {
+        path_regexp \.(js|css|png|jpg|jpeg|gif|ico)$
+    }
+    handle @media {
+        # sets the cache time out for +1 year.
+        # not quite the same as the nginx "expires max".
+        header Cache-Control max-age=31557600
+    }
+
+    @styles {
+        path /sites/*/files/styles/
+        path_regexp capture_group ^/(.*)$
+    }
+    handle @styles  {
+        try_files {uri} /index.php?q={re.capture_group.1};
+    }
+
+    handle {
+        try_files {path} /index.php?{query}
+    
+        @app-env {
+            path_regexp ^/index\.php(/|$)
+        }
+        handle @app-env {
+            # Authenticates the api-gateway.
+            # Copies a filtered version of the api-gateway X-Consumer-Groups header
+            # into X-Consumer-Groups-Filtered, only allowing the client to specify the
+            # header if it carries an Authorization header too
+            map {client_ip}/{http.request.header.authorization} {consumer_groups_filtered} {
+                "~^127.0.0.1/.*$" {http.request.header.http_x_consumer_groups}
+                {% for user in pillar.journal_cms.consumer_groups_filter.values() -%}
+                "~^.*/Basic {{ salt['hashutil.base64_b64encode'](user['username'] ~ ':' ~ user['password']) }}$" {http.request.header.http_x_consumer_groups}
+                {% endfor -%}
+                default ""
+            }
+
+            # authentication debugging
+            header "X-Consumer-Groups-Filtered" {consumer_groups_filtered}
+            header "X-Consumer-Groups-Remote-Addr" {client_ip} # TODO
+
+            php_fastcgi unix//var/php-fpm.sock {
+                # lsh@2024-03-22: can't see any reference to this in journal-cms project
+                env HTTP_X_CONSUMER_GROUPS {consumer_groups_filtered}
+                capture_stderr true
+            }
+        }
+    }
+}
+
+:80 {
+    import config
+}
+
+{% if salt['elife.cfg']('cfn.outputs.DomainName') %}
+:443 {
+    import ../snippets/certs
+    import config
+}
+{% endif %}
