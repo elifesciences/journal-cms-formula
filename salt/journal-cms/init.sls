@@ -267,7 +267,7 @@ journal-cms-vhost:
             - cmd: caddy-validate-config
         - listen_in:
             - service: caddy-server-service
-            #- service: php-fpm # lsh@2024-03-20: restarting the app shouldn't be necessary?
+            - service: php-fpm
 
 {% else %}
 
