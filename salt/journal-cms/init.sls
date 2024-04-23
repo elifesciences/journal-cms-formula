@@ -66,7 +66,7 @@ composer-install:
         {% elif pillar.elife.env != 'dev' %}
         - name: composer --no-interaction install --optimize-autoloader
         {% else %}
-        - name: composer --no-interaction install
+        - name: composer --no-interaction install 
         {% endif %}
         - cwd: /srv/journal-cms
         - runas: {{ pillar.elife.deploy_user.username }}
@@ -189,11 +189,11 @@ journal-cms-{{ key }}-user:
         - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
         - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
         - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
-
+        
         {% else %}
         # local mysql
         - host: localhost
-
+        
         {% endif %}
         - require:
             - mysql-ready
@@ -217,7 +217,7 @@ journal-cms-{{ key }}-access:
 
         {% else %}
         - host: localhost # default
-
+        
         {% endif %}
         - require:
             - mysql_user: journal-cms-{{ key }}-user
@@ -293,7 +293,7 @@ site-was-installed-check:
         - onlyif: cd /srv/journal-cms/web && sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
         - require:
             - site-was-installed-check-flag-remove
-        - require_in:
+        - require_in: 
             - cmd: site-install
 
 site-install:
@@ -311,12 +311,7 @@ site-install:
         # always perform a new site-install on dev and ci
         {% if pillar.elife.env not in ['dev', 'ci'] %}
         - unless:
-            {% if pillar.elife.env not in ['continuumtest', 'prod'] %}
             - sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
-            {% else %}
-            # never attempt reinstall on continuumtest or prod
-            - false
-            {% endif %}
         {% endif %}
 
 site-update-db:
@@ -324,7 +319,7 @@ site-update-db:
         - name: ../vendor/bin/drush updatedb -y
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
-        - require:
+        - require: 
             - site-install
 
 site-configuration-import:
@@ -332,7 +327,7 @@ site-configuration-import:
         - name: ../vendor/bin/drush config-import -y
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
-        - require:
+        - require: 
             - site-update-db
 
 site-cache-rebuild-again:
@@ -344,7 +339,7 @@ site-cache-rebuild-again:
             - site-configuration-import
 
 site-permissions-rebuild:
-    cmd.run:
+    cmd.run: 
         - name: ../vendor/bin/drush php-eval "node_access_rebuild();"
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
