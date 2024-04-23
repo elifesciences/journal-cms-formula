@@ -1,0 +1,104 @@
+(config) {
+
+    log {
+        output file /var/log/caddy/access.log
+        format json {
+            time_format rfc3339
+        }
+    }
+
+    root * /srv/journal-cms/web
+
+    request_body {
+        max_size 32MB
+    }
+
+    handle /favicon.ico {
+        skip_log
+        file_server
+    }
+
+    @direct-php-requests {
+        path *.php
+    }
+    handle @direct-php-requests {
+        error 403
+    }
+
+    @path-traversal {
+        path_regexp (^|\/)\.
+    }
+    handle @path-traversal {
+        error 403
+    }
+
+    handle /ping-nginx {
+        skip_log
+        respond 200 "pong"
+    }
+
+    @media {
+        path_regexp \.(js|css|png|jpg|jpeg|gif|ico)$
+    }
+    handle @media {
+        # sets the cache time out for +1 year.
+        # not quite the same as the nginx "expires max".
+        header Cache-Control max-age=31557600
+    }
+
+    @styles {
+        path /sites/*/files/styles/*
+        path_regexp capture_group ^/(.*)$
+    }
+    handle @styles  {
+        try_files {http.request.uri} /index.php?q={re.capture_group.1}
+    }
+
+    handle {
+        try_files {path} /index.php?{query}
+        @app-env {
+            path_regexp ^/index\.php(/|$)
+        }
+        handle @app-env {
+            # Authenticates the api-gateway.
+            # Captures the value of the api-gateway "X-Consumer-Groups" HTTP header into the variable `consumer_groups_filtered`,
+            # but only if: the request is local (127.0.0.1) or has a valid HTTP Authorization header.
+            # lsh@2024-04-10: translation from nginx modified slightly to add the header as the third segment in the 
+            # regular expression so it's value can be captured. Placeholders (variables) can't otherwise be used.
+            # lsh@2024-04-10: how to test this?? using plain curl:
+            #   curl -v -H "X-Consumer-Groups: foobar" "http://127.0.0.1/profiles"
+            #   curl -v -H "X-Consumer-Groups: foobar" "http://some-user:some-credentials@localhost/profiles"
+            # if there is a match then 'foobar' should be present in the response header "X-Consumer-Groups-Filtered".
+            map {client_ip}/{http.request.header.authorization}/{http.request.header.X-Consumer-Groups} {consumer_groups_filtered} {
+                "~^127.0.0.1/.*/(.+)$" "${1}"
+                {% for user in pillar.journal_cms.consumer_groups_filter.values() -%}
+                "~^.*/Basic {{ salt['hashutil.base64_b64encode'](user['username'] ~ ':' ~ user['password']) }}/(.+)$" "${1}"
+                {% endfor -%}
+                default ""
+            }
+
+            # authentication debugging
+            header X-Consumer-Groups-Filtered {consumer_groups_filtered}
+            header X-Consumer-Groups-Remote-Addr {http.request.remote.host}
+
+            php_fastcgi unix//var/php-fpm.sock {
+                env HTTP_X_CONSUMER_GROUPS {consumer_groups_filtered}
+                env HTTP_AUTHORIZATION ""
+                capture_stderr true
+            }
+        }
+    }
+
+    respond 404
+}
+
+:80 {
+    import config
+}
+
+{% if salt['elife.cfg']('cfn.outputs.DomainName') %}
+:443 {
+    import ../snippets/certs
+    import config
+}
+{% endif %}
