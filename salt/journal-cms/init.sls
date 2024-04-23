@@ -314,7 +314,8 @@ site-install:
             {% if pillar.elife.env not in ['continuumtest', 'prod'] %}
             - sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
             {% else %}
-            - test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag
+            # never attempt reinstall on continuumtest or prod
+            - false
             {% endif %}
         {% endif %}
 
