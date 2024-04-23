@@ -313,7 +313,7 @@ site-install:
         - unless:
             {% if pillar.elife.env not in ['continuumtest', 'prod'] %}
             - sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
-            {% else %}
+            {% el se %}
             - test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag
             {% endif %}
         {% endif %}
