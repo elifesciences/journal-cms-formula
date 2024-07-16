@@ -309,33 +309,13 @@ site-install:
         - require:
             - journal-cms-repository
         # Always perform a new site-install on dev and ci
-        {% if pillar.elife.env not in ['dev', 'ci'] %}
+        {% if pillar.elife.env not in ['dev', 'ci', 'continuumtest', 'prod'] %}
         - unless:
             - sudo -u {{ pillar.elife.deploy_user.username }} ../vendor/bin/drush cget system.site name
+        # Never perform site-install on continuumtest and prod
+        {% elif pillar.elife.env in ['continuumtest', 'prod'] %}
+            - true
         {% endif %}
-
-{% if pillar.elife.env in ['continuumtest', 'prod'] %}
-site-install_skip:
-  cmd.run:
-    - name: echo "Never perform site-install on continuumtest and prod"
-{% elif pillar.elife.env in ['dev', 'ci'] %}
-site-install_dev_ci:
-  cmd.run:
-    - name: |
-        set -e
-        ../vendor/bin/drush site-install minimal --existing-config -y
-        ####test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
-        #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
-        redis-cli flushall
-    - cwd: /srv/journal-cms/web
-    - runas: {{ pillar.elife.deploy_user.username }}
-    - require:
-        - journal-cms-repository
-{% else %}
-site-install_other:
-  cmd.run:
-    - name: sudo -u {{ pillar.elife.deploy_user.username }} ../vendor/bin/drush cget system.site name
-{% endif %}
 
 site-update-db:
     cmd.run:
