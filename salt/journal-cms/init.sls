@@ -30,8 +30,7 @@ journal-cms-php-extensions:
             - php
             # lsh@2022-11-04: added as we have another instance of apache2 being installed.
             # - https://github.com/elifesciences/issues/issues/7871
-            # lsh@2024-03-22: disabled. depending on php-nginx-deps that installs php7.4-fpm should be enough to satisfy apt
-            #- nginx-server
+            - nginx-server
             - php-nginx-deps
         - listen_in:
             - service: php-fpm
@@ -255,22 +254,6 @@ journal-cms-{{ key }}-access:
 
 {% endfor %}
 
-{% if pillar.elife.webserver.app == "caddy" %}
-
-journal-cms-vhost:
-    file.managed:
-        - name: /etc/caddy/sites.d/journal-cms
-        - source: salt://journal-cms/config/etc-caddy-sites.d-journal-cms
-        - template: jinja
-        - require_in:
-            - file: site-was-installed-check
-            - cmd: caddy-validate-config
-        - listen_in:
-            - service: caddy-server-service
-            - service: php-fpm
-
-{% else %}
-
 journal-cms-vhost:
     file.managed:
         - name: /etc/nginx/sites-enabled/journal-cms.conf
@@ -287,8 +270,6 @@ non-https-redirect:
         - name: /etc/nginx/sites-enabled/unencrypted-redirect.conf
         - require:
             - journal-cms-vhost
-
-{% endif %}
 
 # when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
