@@ -9,12 +9,12 @@ is_first_provision() {
 }
 
 if [[ $ENVIRONMENT == "ci" || $ENVIRONMENT == "dev" ]]; then
-    echo "Always site-install"
+    ../vendor/bin/drush site-install minimal --existing-config -y
     exit 0
 fi
 if [[ $ENVIRONMENT == demo* ]] && is_first_provision; then
-    echo "always site-install on first provision"
-    touch $FIRST_PROVISIONED
+    ../vendor/bin/drush site-install minimal --existing-config -y
+    date > "$FIRST_PROVISIONED"
     exit 0
 fi
 exit 0
