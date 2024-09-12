@@ -1,6 +1,6 @@
 {% set osrelease = salt['grains.get']('osrelease') %}
 
-{% set phpver = "7.2" if osrelease == "18.04" else "7.4" %}
+{% set phpver = "8.1" %}
 
 journal-cms-backups:
     file.managed:
@@ -174,59 +174,6 @@ journal-cms-{{ key }}:
         - require_in:
             - file: site-was-installed-check
 
-{% if osrelease == "18.04" %}
-
-journal-cms-{{ key }}-user:
-    mysql_user.present:
-        - name: {{ db.user }}
-        - password: {{ db.password }}
-
-        {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
-        # remote mysql
-        #- host: '10.0.2.%' # todo, fix this
-        - host: '{{ salt['elife.cfg']('project.netmask') }}'
-        - connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
-        - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
-        - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
-        - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
-        
-        {% else %}
-        # local mysql
-        - host: localhost
-        
-        {% endif %}
-        - require:
-            - mysql-ready
-        - require_in:
-            - file: site-was-installed-check
-
-journal-cms-{{ key }}-access:
-    mysql_grants.present:
-        - user: {{ db.user }}
-        - database: {{ db.name }}.*
-        - grant: all privileges
-
-        {% if salt['elife.cfg']('cfn.outputs.RDSHost') %}
-        # remote mysql
-        #- host: '10.0.2.%' # todo, fix this
-        - host: '{{ salt['elife.cfg']('project.netmask') }}'
-        - connection_user: {{ salt['elife.cfg']('project.rds_username') }} # rds 'owner' uname
-        - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
-        - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
-        - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
-
-        {% else %}
-        - host: localhost # default
-        
-        {% endif %}
-        - require:
-            - mysql_user: journal-cms-{{ key }}-user
-            - mysql_database: journal-cms-{{ key }}
-        - require_in:
-            - file: site-was-installed-check
-
-{% else %}
-
 # work around for mysql user grants issues with mysql8+ in 20.04.
 
 {% set host = "localhost" if not salt['elife.cfg']('cfn.outputs.RDSHost') else salt['elife.cfg']('project.netmask') %}
@@ -250,8 +197,6 @@ journal-cms-{{ key }}-access:
         - require:
             - mysql-server
 
-{% endif %}
-
 {% endfor %}
 
 journal-cms-vhost:
@@ -271,7 +216,6 @@ non-https-redirect:
         - require:
             - journal-cms-vhost
 
-# when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
     file.managed:
         - name: /etc/php/{{ phpver }}/cli/conf.d/20-sendmail.ini
