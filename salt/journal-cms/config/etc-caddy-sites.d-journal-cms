@@ -38,12 +38,13 @@
     }
 
     @media {
-        path_regexp \.(js|css|png|jpg|jpeg|gif|ico)$
+        path_regexp \.(js|css|png|jpg|jpeg|gif|ico|svg|woff2)$
     }
     handle @media {
         # sets the cache time out for +1 year.
         # not quite the same as the nginx "expires max".
         header Cache-Control max-age=31557600
+        file_server 
     }
 
     @styles {
