@@ -327,10 +327,13 @@ site-install:
         - runas: {{ pillar.elife.deploy_user.username }}
         - require:
             - journal-cms-repository
-        # always perform a new site-install on dev and ci
-        {% if pillar.elife.env not in ['dev', 'ci'] %}
+        # Always perform a new site-install on dev and ci
+        {% if pillar.elife.env not in ['dev', 'ci', 'continuumtest', 'prod'] %}
         - unless:
-            - sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
+            - sudo -u {{ pillar.elife.deploy_user.username }} ../vendor/bin/drush cget system.site name
+        # Never perform site-install on continuumtest and prod
+        {% elif pillar.elife.env in ['continuumtest', 'prod'] %}
+            - true
         {% endif %}
 
 site-update-db:
