@@ -53,6 +53,7 @@
     }
     handle @styles  {
         try_files {http.request.uri} /index.php?q={re.capture_group.1}
+        php_fastcgi unix//var/php-fpm.sock
     }
 
     handle {
