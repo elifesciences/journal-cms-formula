@@ -37,6 +37,14 @@
         respond 200 "pong"
     }
 
+    @styles {
+        path_regexp capture_group ^/(sites/.*/files/styles/.*)$
+    }
+    handle @styles  {
+        try_files /index.php?q={re.capture_group.1}&{query}
+        php_fastcgi unix//var/php-fpm.sock
+    }
+
     @media {
         path_regexp \.(js|css|png|jpg|jpeg|gif|ico|svg|woff2)$
     }
@@ -45,14 +53,6 @@
         # not quite the same as the nginx "expires max".
         header Cache-Control max-age=31557600
         file_server 
-    }
-
-    @styles {
-        path /sites/*/files/styles/*
-        path_regexp capture_group ^/(.*)$
-    }
-    handle @styles  {
-        try_files {http.request.uri} /index.php?q={re.capture_group.1}
     }
 
     handle {
