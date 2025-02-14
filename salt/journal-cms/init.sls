@@ -15,6 +15,7 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
+{% if salt['state.sls_exists']('elife.php7') %}
 journal-cms-php-extensions:
     pkg.installed:
         - skip_suggestions: true
@@ -35,6 +36,7 @@ journal-cms-php-extensions:
             - php-nginx-deps
         - listen_in:
             - service: php-fpm
+{% endif %}
 
 journal-cms-repository:
     builder.git_latest:
