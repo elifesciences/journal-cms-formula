@@ -50,7 +50,9 @@ journal-cms-repository:
         - force_reset: True
         - require:
             - srv-directory-linked
+{% if 'elife.php7' in salt['state.show_top']().base %}
             - journal-cms-php-extensions
+{% endif %}
 
     # file.directory can be a bit slow when recurring over many files
     cmd.run:
