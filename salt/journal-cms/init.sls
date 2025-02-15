@@ -15,12 +15,11 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
+{% if 'elife.php7' in salt['state.show_top']().base %}
 journal-cms-php-extensions:
     pkg.installed:
         - skip_suggestions: true
         - install_recommends: false
-        - onlyif:
-            - php -v | grep ubuntu
         - pkgs:
             - php-redis # transitive dependency on apache2 via phpapi-20190902 -> libapache2-mod-php7.4 -> apache2
             - php-igbinary # transitive dependency on apache2 via phpapi-20190902 -> libapache2-mod-php7.4 -> apache2
@@ -37,6 +36,7 @@ journal-cms-php-extensions:
             - php-nginx-deps
         - listen_in:
             - service: php-fpm
+{% endif %}
 
 journal-cms-repository:
     builder.git_latest:
