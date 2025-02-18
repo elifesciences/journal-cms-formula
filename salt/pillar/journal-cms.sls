@@ -57,6 +57,14 @@ elife:
     webserver:
         app: caddy
 
+    php:
+        fpm: true
+        extra_extensions:
+            - redis
+            - igbinary
+            - uploadprogress
+            - sqlite3
+
     composer:
         version: 2.3.5
 
