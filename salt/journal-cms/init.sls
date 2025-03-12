@@ -15,6 +15,7 @@ journal-cms-localhost:
         - names:
             - journal-cms.local
 
+{% if 'elife.php7' in salt['state.show_top']().base %}
 journal-cms-php-extensions:
     pkg.installed:
         - skip_suggestions: true
@@ -35,6 +36,7 @@ journal-cms-php-extensions:
             - php-nginx-deps
         - listen_in:
             - service: php-fpm
+{% endif %}
 
 journal-cms-repository:
     builder.git_latest:
@@ -48,7 +50,9 @@ journal-cms-repository:
         - force_reset: True
         - require:
             - srv-directory-linked
+{% if 'elife.php7' in salt['state.show_top']().base %}
             - journal-cms-php-extensions
+{% endif %}
 
     # file.directory can be a bit slow when recurring over many files
     cmd.run:
