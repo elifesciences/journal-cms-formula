@@ -1,6 +1,6 @@
 {% set osrelease = salt['grains.get']('osrelease') %}
 
-{% set phpver = "7.2" if osrelease == "18.04" else "7.4" %}
+{% set phpver = "7.4" %}
 
 journal-cms-backups:
     file.managed:
@@ -30,7 +30,8 @@ journal-cms-php-extensions:
             - php
             # lsh@2022-11-04: added as we have another instance of apache2 being installed.
             # - https://github.com/elifesciences/issues/issues/7871
-            - nginx-server
+            # lsh@2024-03-22: disabled. depending on php-nginx-deps that installs php7.4-fpm should be enough to satisfy apt
+            #- nginx-server
             - php-nginx-deps
         - listen_in:
             - service: php-fpm
@@ -66,7 +67,7 @@ composer-install:
         {% elif pillar.elife.env != 'dev' %}
         - name: composer --no-interaction install --optimize-autoloader
         {% else %}
-        - name: composer --no-interaction install 
+        - name: composer --no-interaction install
         {% endif %}
         - cwd: /srv/journal-cms
         - runas: {{ pillar.elife.deploy_user.username }}
@@ -189,11 +190,11 @@ journal-cms-{{ key }}-user:
         - connection_pass: {{ salt['elife.cfg']('project.rds_password') }} # rds 'owner' pass
         - connection_host: {{ salt['elife.cfg']('cfn.outputs.RDSHost') }}
         - connection_port: {{ salt['elife.cfg']('cfn.outputs.RDSPort') }}
-        
+
         {% else %}
         # local mysql
         - host: localhost
-        
+
         {% endif %}
         - require:
             - mysql-ready
@@ -217,7 +218,7 @@ journal-cms-{{ key }}-access:
 
         {% else %}
         - host: localhost # default
-        
+
         {% endif %}
         - require:
             - mysql_user: journal-cms-{{ key }}-user
@@ -254,6 +255,22 @@ journal-cms-{{ key }}-access:
 
 {% endfor %}
 
+{% if pillar.elife.webserver.app == "caddy" %}
+
+journal-cms-vhost:
+    file.managed:
+        - name: /etc/caddy/sites.d/journal-cms
+        - source: salt://journal-cms/config/etc-caddy-sites.d-journal-cms
+        - template: jinja
+        - require_in:
+            - file: site-was-installed-check
+            - cmd: caddy-validate-config
+        - listen_in:
+            - service: caddy-server-service
+            - service: php-fpm
+
+{% else %}
+
 journal-cms-vhost:
     file.managed:
         - name: /etc/nginx/sites-enabled/journal-cms.conf
@@ -271,11 +288,13 @@ non-https-redirect:
         - require:
             - journal-cms-vhost
 
+{% endif %}
+
 # when more stable, maybe this should be extended to the fpm one?
 php-cli-ini-with-fake-sendmail:
     file.managed:
         - name: /etc/php/{{ phpver }}/cli/conf.d/20-sendmail.ini
-        - source: salt://journal-cms/config/etc-php-{{ phpver }}-cli-conf.d-20-sendmail.ini
+        - source: salt://journal-cms/config/etc-php-cli-conf.d-20-sendmail.ini
         - require:
             - php
         - require_in:
@@ -293,33 +312,32 @@ site-was-installed-check:
         - onlyif: cd /srv/journal-cms/web && sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
         - require:
             - site-was-installed-check-flag-remove
-        - require_in: 
+        - require_in:
             - cmd: site-install
 
 site-install:
     cmd.run:
         - name: |
             set -e
+            {% if pillar.elife.env in ['prod', 'continuumtest'] %}
+            echo "{{ pillar.elife.env }} is a protected environment, skip site install."
+            {% else %}
             ../vendor/bin/drush site-install minimal --existing-config -y
             ####test -e /home/{{ pillar.elife.deploy_user.username }}/site-was-installed.flag && ../vendor/bin/drush cr || echo "site was not installed before, not rebuilding cache"
             #../vendor/bin/drush cr # may fail with "You have requested a non-existent service "cache.backend.redis"
             redis-cli flushall
+            {% endif %}
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
         - require:
             - journal-cms-repository
-        # always perform a new site-install on dev and ci
-        {% if pillar.elife.env not in ['dev', 'ci'] %}
-        - unless:
-            - sudo -u {{ pillar.elife.deploy_user.username}} ../vendor/bin/drush cget system.site name
-        {% endif %}
 
 site-update-db:
     cmd.run:
         - name: ../vendor/bin/drush updatedb -y
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
-        - require: 
+        - require:
             - site-install
 
 site-configuration-import:
@@ -327,7 +345,7 @@ site-configuration-import:
         - name: ../vendor/bin/drush config-import -y
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
-        - require: 
+        - require:
             - site-update-db
 
 site-cache-rebuild-again:
@@ -339,7 +357,7 @@ site-cache-rebuild-again:
             - site-configuration-import
 
 site-permissions-rebuild:
-    cmd.run: 
+    cmd.run:
         - name: ../vendor/bin/drush php-eval "node_access_rebuild();"
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
