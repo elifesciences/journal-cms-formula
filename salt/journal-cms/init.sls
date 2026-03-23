@@ -82,8 +82,6 @@ composer-install:
             - install-composer
             - journal-cms-localhost
 
-{# lsh@2021-07-30: disabled to test behaviour of 404 errors in end2end tests
-
 # these files accumulate over time and are not required in non-prod environments.
 {% if pillar.elife.env in ['dev', 'ci', 'end2end'] %}
 prune-accumulating-files:
@@ -94,8 +92,6 @@ prune-accumulating-files:
         - require_in:
             - cmd: web-sites-file-permissions
 {% endif %}
-
-#}
 
 web-sites-file-permissions:
     cmd.run:
