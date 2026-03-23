@@ -338,7 +338,15 @@ site-install:
 
 site-update-db:
     cmd.run:
-        - name: ../vendor/bin/drush updatedb -y
+        - name: ../vendor/bin/drush updatedb --no-cache-clear -y
+        - cwd: /srv/journal-cms/web
+        - runas: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - site-install
+
+site-cache-rebuild-again:
+    cmd.run:
+        - name: ../vendor/bin/drush cr
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
         - require:
@@ -352,13 +360,21 @@ site-configuration-import:
         - require:
             - site-update-db
 
-site-cache-rebuild-again:
+site-cache-rebuild-again-again:
     cmd.run:
         - name: ../vendor/bin/drush cr
         - cwd: /srv/journal-cms/web
         - runas: {{ pillar.elife.deploy_user.username }}
         - require:
             - site-configuration-import
+
+site-deploy-hook:
+    cmd.run: 
+        - name: ../vendor/bin/drush deploy:hook"
+        - cwd: /srv/journal-cms/web
+        - runas: {{ pillar.elife.deploy_user.username }}
+        - require:
+            - site-cache-rebuild-again-again
 
 site-permissions-rebuild:
     cmd.run:
@@ -367,7 +383,7 @@ site-permissions-rebuild:
         - runas: {{ pillar.elife.deploy_user.username }}
         - onlyif: cd /srv/journal-cms/web && [[ $(sudo -u {{ pillar.elife.deploy_user.username }} ../vendor/bin/drush php-eval "print node_access_needs_rebuild()") == "1" ]]
         - require:
-            - site-cache-rebuild-again
+            - site-deploy-hook
 
 aws-credentials-cli:
     file.managed:
